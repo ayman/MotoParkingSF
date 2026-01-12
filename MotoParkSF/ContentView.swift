@@ -204,6 +204,7 @@ struct ContentView: View {
     
     return ContentView(locationManager: previewLocationManager)
 }
+
 // Detail view for parking spot information
 struct ParkingSpotDetailView: View {
     let spot: ParkingSpot
@@ -213,8 +214,9 @@ struct ParkingSpotDetailView: View {
         NavigationStack {
             List {
                 Section("Location") {
-                    LabeledContent("Street", value: spot.street)
-                    LabeledContent("Details", value: spot.location)
+                    if !spot.isMetered {
+                        LabeledContent("Cross Street", value: spot.location.capitalized)
+                    }
                     
                     if let neighborhood = spot.neighborhood {
                         LabeledContent("Neighborhood", value: neighborhood)
@@ -268,7 +270,8 @@ struct ParkingSpotDetailView: View {
                     }
                 }
             }
-            .navigationTitle(spot.isMetered ? "Metered Parking Spots" : "Unmetered Parking Spots")
+            // .navigationTitle(spot.isMetered ? "Metered Parking Spots" : "Unmetered Parking Spots")
+            .navigationTitle("📍 \(spot.street.capitalized)")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {

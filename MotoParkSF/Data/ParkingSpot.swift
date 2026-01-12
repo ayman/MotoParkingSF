@@ -97,10 +97,16 @@ struct UnmeteredParkingResponse: Codable {
         let spots = data.compactMap { row -> ParkingSpot? in
             guard row.count > 19 else { return nil }
             
-            guard let street = row[10].value as? String,
-                  let location = row[12].value as? String else {
+            // Index 10 is the street name (e.g., "STEINER ST")
+            // Index 12 is the location/full address (e.g., "1000 STEINER ST")
+            guard let fullAddress = row[12].value as? String,
+                  let streetName = row[10].value as? String else {
                 return nil
             }
+            
+            // Use the full address from index 12 as the street display
+            let street = fullAddress
+            let location = streetName
             
             // Parse numberOfSpaces - it's a String in the JSON, need to convert
             let numberOfSpaces: Int?
@@ -207,7 +213,7 @@ struct MeteredParkingResponse: Codable {
         print("🔄 Processing \(data.count) metered parking rows...")
         
         // First, collect all rows grouped by space ID
-        var spaceGroups: [String: (street: String, coordinate: CLLocationCoordinate2D, rateCode: String?, count: Int)] = [:]
+        var spaceGroups: [String: (street: String, coordinate: CLLocationCoordinate2D, rateCode: String?, neighborhood: String?, count: Int)] = [:]
         
         for row in data {
             guard row.count > 24 else { continue }
@@ -217,13 +223,31 @@ struct MeteredParkingResponse: Codable {
                 continue
             }
             
-            // Index 12 contains the street name
-            guard let street = row[12].value as? String else {
-                continue
+            // Index 21 contains the street number, index 22 contains the street name
+            let streetNumber = row[21].value as? String
+            let streetName = row[22].value as? String
+            
+            // Combine street number and name
+            let street: String
+            if let number = streetNumber, let name = streetName, !number.isEmpty, !name.isEmpty {
+                street = "\(number) \(name)"
+            } else if let name = streetName, !name.isEmpty {
+                street = name
+            } else if let number = streetNumber, !number.isEmpty {
+                street = number
+            } else {
+                // Fallback to index 12 if 21 and 22 are not available
+                guard let fallbackStreet = row[12].value as? String else {
+                    continue
+                }
+                street = fallbackStreet
             }
             
             // Index 19 contains the rate code (MC1, MC2, MC3, MC5)
             let rateCode = row[19].value as? String
+            
+            // Index 20 contains the neighborhood
+            let neighborhood = row[20].value as? String
             
             // Index 24 contains an array with lat/long at indices 1 and 2
             guard let locationArray = row[24].value as? [Any],
@@ -251,6 +275,7 @@ struct MeteredParkingResponse: Codable {
                     street: existing.street,
                     coordinate: existing.coordinate,
                     rateCode: existing.rateCode,
+                    neighborhood: existing.neighborhood,
                     count: existing.count + 1
                 )
             } else {
@@ -258,6 +283,7 @@ struct MeteredParkingResponse: Codable {
                     street: street,
                     coordinate: coordinate,
                     rateCode: rateCode,
+                    neighborhood: neighborhood,
                     count: 1
                 )
             }
@@ -271,7 +297,7 @@ struct MeteredParkingResponse: Codable {
                 location: "Metered parking",
                 numberOfSpaces: info.count,
                 coordinate: info.coordinate,
-                neighborhood: nil,
+                neighborhood: info.neighborhood,
                 isMetered: true,
                 rateCode: info.rateCode
             )
