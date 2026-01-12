@@ -284,12 +284,14 @@ struct ParkingSpotDetailView: View {
     }
     
     private func openInMaps() {
-        let placemark = MKPlacemark(coordinate: spot.coordinate)
-        let mapItem = MKMapItem(placemark: placemark)
-        mapItem.name = spot.street
-        mapItem.openInMaps(launchOptions: [
-            MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeDriving
-        ])
+        // let placemark = MKPlacemark(coordinate: spot.coordinate)
+        // let mapItem = MKMapItem(placemark: placemark)
+        let location = CLLocation(latitude: spot.coordinate.latitude,
+                                  longitude: spot.coordinate.longitude)
+        let address = MKAddress(fullAddress: spot.street, shortAddress: spot.street)
+        let mapItem = MKMapItem(location: location, address: address)
+        mapItem.name = spot.street.capitalized
+        mapItem.openInMaps()
     }
 }
 
