@@ -4,6 +4,8 @@
 //
 //  Created by David A. Shamma on 1/12/26.
 //
+// Metered: https://data.sfgov.org/api/views/uf55-k7py/rows.json (13 should be 'black', 25 is '[ null, "37.798279", "-122.426623", null, false ]')
+// Unmetered: https://data.sfgov.org/api/views/egmb-2zhs/rows.json
 
 import Foundation
 import MapKit
