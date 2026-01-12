@@ -51,11 +51,14 @@ struct ContentView: View {
                     Annotation(spot.street, coordinate: spot.coordinate) {
                         ZStack {
                             Circle()
-                                .fill(.white)
+                                .fill(.orange)
                                 .frame(width: 32, height: 32)
-                            Image(systemName: "parkingsign.circle.fill")
-                                .font(.system(size: 24))
-                                .foregroundStyle(.red)
+                            Circle()
+                                .stroke(.white, lineWidth: 2)
+                                .frame(width: 32, height: 32)
+                            Text("\(spot.numberOfSpaces ?? 0)")
+                                .font(.system(size: 14, weight: .bold))
+                                .foregroundStyle(.white)
                         }
                     }
                     .annotationTitles(.hidden)
@@ -232,7 +235,8 @@ struct ParkingSpotDetailView: View {
     }
     
     private func openInMaps() {
-        let mapItem = MKMapItem(placemark: MKPlacemark(coordinate: spot.coordinate))
+        let placemark = MKPlacemark(coordinate: spot.coordinate)
+        let mapItem = MKMapItem(placemark: placemark)
         mapItem.name = spot.street
         mapItem.openInMaps(launchOptions: [
             MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeDriving
