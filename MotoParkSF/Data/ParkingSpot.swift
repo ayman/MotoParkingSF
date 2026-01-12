@@ -22,6 +22,24 @@ struct ParkingSpot: Identifiable, Hashable {
     let coordinate: CLLocationCoordinate2D
     let neighborhood: String?
     let isMetered: Bool
+    let rateCode: String?
+    
+    var rateDescription: String? {
+        guard let rateCode = rateCode else { return nil }
+        
+        switch rateCode {
+        case "MC1":
+            return "$0.70/hour"
+        case "MC2":
+            return "$0.60/hour"
+        case "MC3":
+            return "$0.40/hour"
+        case "MC5":
+            return "$0.25–$6.00/hour"
+        default:
+            return nil
+        }
+    }
     
     // Implement Hashable
     func hash(into hasher: inout Hasher) {
@@ -128,7 +146,8 @@ struct UnmeteredParkingResponse: Codable {
                 numberOfSpaces: numberOfSpaces,
                 coordinate: coordinate,
                 neighborhood: neighborhood,
-                isMetered: false
+                isMetered: false,
+                rateCode: nil
             )
         }
         print("✅ Successfully parsed \(spots.count) spots")
@@ -188,7 +207,7 @@ struct MeteredParkingResponse: Codable {
         print("🔄 Processing \(data.count) metered parking rows...")
         
         // First, collect all rows grouped by space ID
-        var spaceGroups: [String: [(street: String, coordinate: CLLocationCoordinate2D)]] = [:]
+        var spaceGroups: [String: (street: String, coordinate: CLLocationCoordinate2D, rateCode: String?, count: Int)] = [:]
         
         for row in data {
             guard row.count > 24 else { continue }
@@ -202,6 +221,9 @@ struct MeteredParkingResponse: Codable {
             guard let street = row[12].value as? String else {
                 continue
             }
+            
+            // Index 19 contains the rate code (MC1, MC2, MC3, MC5)
+            let rateCode = row[19].value as? String
             
             // Index 24 contains an array with lat/long at indices 1 and 2
             guard let locationArray = row[24].value as? [Any],
@@ -223,25 +245,35 @@ struct MeteredParkingResponse: Codable {
                 longitude: lon
             )
             
-            // Group by space ID
-            if spaceGroups[spaceID] == nil {
-                spaceGroups[spaceID] = []
+            // Group by space ID - if already exists, just increment count
+            if let existing = spaceGroups[spaceID] {
+                spaceGroups[spaceID] = (
+                    street: existing.street,
+                    coordinate: existing.coordinate,
+                    rateCode: existing.rateCode,
+                    count: existing.count + 1
+                )
+            } else {
+                spaceGroups[spaceID] = (
+                    street: street,
+                    coordinate: coordinate,
+                    rateCode: rateCode,
+                    count: 1
+                )
             }
-            spaceGroups[spaceID]?.append((street: street, coordinate: coordinate))
         }
         
         // Now create one ParkingSpot per space ID with the count
-        let spots = spaceGroups.compactMap { (spaceID, locations) -> ParkingSpot? in
-            guard let first = locations.first else { return nil }
-            
-            return ParkingSpot(
+        let spots = spaceGroups.map { (spaceID, info) -> ParkingSpot in
+            ParkingSpot(
                 id: "metered-\(spaceID)",
-                street: first.street,
+                street: info.street,
                 location: "Metered parking",
-                numberOfSpaces: locations.count,
-                coordinate: first.coordinate,
+                numberOfSpaces: info.count,
+                coordinate: info.coordinate,
                 neighborhood: nil,
-                isMetered: true
+                isMetered: true,
+                rateCode: info.rateCode
             )
         }
         

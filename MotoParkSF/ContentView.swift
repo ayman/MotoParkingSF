@@ -231,6 +231,17 @@ struct ParkingSpotDetailView: View {
                         }
                     }
                     
+                    if spot.isMetered, let rateDescription = spot.rateDescription {
+                        LabeledContent("Rate") {
+                            HStack {
+                                Image(systemName: "dollarsign.circle")
+                                    .foregroundStyle(.red)
+                                Text(rateDescription)
+                                    .font(.headline)
+                            }
+                        }
+                    }
+                    
                     if let spaces = spot.numberOfSpaces {
                         LabeledContent("Number of Spaces") {
                             HStack {
@@ -257,7 +268,7 @@ struct ParkingSpotDetailView: View {
                     }
                 }
             }
-            .navigationTitle("Parking Spot")
+            .navigationTitle(spot.isMetered ? "Metered Parking Spots" : "Unmetered Parking Spots")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
