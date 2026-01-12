@@ -4,8 +4,12 @@
 //
 //  Created by David A. Shamma on 1/12/26.
 //
-// Metered: https://data.sfgov.org/api/views/uf55-k7py/rows.json (13 should be 'black', 25 is '[ null, "37.798279", "-122.426623", null, false ]')
-// Unmetered: https://data.sfgov.org/api/views/egmb-2zhs/rows.json
+// Metered:
+// https://data.sfgov.org/Transportation/Metered-motorcycle-spaces/uf55-k7py/about_data
+// Data: https://data.sfgov.org/api/views/uf55-k7py/rows.json (12 should be 'black', 23 is space id, 24 is '[ null, "37.798279", "-122.426623", null, false ]')
+// Unmetered:
+// https://data.sfgov.org/Transportation/Motorcycle-Parking-Unmetered/egmb-2zhs/about_data
+// Data: https://data.sfgov.org/api/views/egmb-2zhs/rows.json
 
 import Foundation
 import MapKit
@@ -17,6 +21,7 @@ struct ParkingSpot: Identifiable, Hashable {
     let numberOfSpaces: Int?
     let coordinate: CLLocationCoordinate2D
     let neighborhood: String?
+    let isMetered: Bool
     
     // Implement Hashable
     func hash(into hasher: inout Hasher) {
@@ -122,7 +127,8 @@ struct UnmeteredParkingResponse: Codable {
                 location: location,
                 numberOfSpaces: numberOfSpaces,
                 coordinate: coordinate,
-                neighborhood: neighborhood
+                neighborhood: neighborhood,
+                isMetered: false
             )
         }
         print("✅ Successfully parsed \(spots.count) spots")
@@ -130,4 +136,117 @@ struct UnmeteredParkingResponse: Codable {
     }
 }
 
+// Response structure for metered parking JSON
+// Index 12 contains the street name (e.g., 'black')
+// Index 24 contains an array: [ null, "37.798279", "-122.426623", null, false ]
+struct MeteredParkingResponse: Codable {
+    let data: [[AnyCodable]]
+    
+    struct AnyCodable: Codable {
+        let value: Any
+        
+        init(from decoder: Decoder) throws {
+            let container = try decoder.singleValueContainer()
+            
+            if let string = try? container.decode(String.self) {
+                value = string
+            } else if let int = try? container.decode(Int.self) {
+                value = int
+            } else if let double = try? container.decode(Double.self) {
+                value = double
+            } else if let bool = try? container.decode(Bool.self) {
+                value = bool
+            } else if let array = try? container.decode([AnyCodable].self) {
+                value = array.map { $0.value }
+            } else if let dict = try? container.decode([String: AnyCodable].self) {
+                value = dict.mapValues { $0.value }
+            } else if container.decodeNil() {
+                value = NSNull()
+            } else {
+                throw DecodingError.dataCorruptedError(in: container, debugDescription: "Cannot decode value")
+            }
+        }
+        
+        func encode(to encoder: Encoder) throws {
+            var container = encoder.singleValueContainer()
+            
+            if let string = value as? String {
+                try container.encode(string)
+            } else if let int = value as? Int {
+                try container.encode(int)
+            } else if let double = value as? Double {
+                try container.encode(double)
+            } else if let bool = value as? Bool {
+                try container.encode(bool)
+            } else if value is NSNull {
+                try container.encodeNil()
+            }
+        }
+    }
+    
+    func toParkingSpots() -> [ParkingSpot] {
+        print("🔄 Processing \(data.count) metered parking rows...")
+        
+        // First, collect all rows grouped by space ID
+        var spaceGroups: [String: [(street: String, coordinate: CLLocationCoordinate2D)]] = [:]
+        
+        for row in data {
+            guard row.count > 24 else { continue }
+            
+            // Index 23 contains the space ID
+            guard let spaceID = row[23].value as? String else {
+                continue
+            }
+            
+            // Index 12 contains the street name
+            guard let street = row[12].value as? String else {
+                continue
+            }
+            
+            // Index 24 contains an array with lat/long at indices 1 and 2
+            guard let locationArray = row[24].value as? [Any],
+                  locationArray.count > 2 else {
+                continue
+            }
+            
+            // Extract latitude and longitude from the array
+            // Format: [ null, "37.798279", "-122.426623", null, false ]
+            guard let latString = locationArray[1] as? String,
+                  let lonString = locationArray[2] as? String,
+                  let lat = Double(latString),
+                  let lon = Double(lonString) else {
+                continue
+            }
+            
+            let coordinate = CLLocationCoordinate2D(
+                latitude: lat,
+                longitude: lon
+            )
+            
+            // Group by space ID
+            if spaceGroups[spaceID] == nil {
+                spaceGroups[spaceID] = []
+            }
+            spaceGroups[spaceID]?.append((street: street, coordinate: coordinate))
+        }
+        
+        // Now create one ParkingSpot per space ID with the count
+        let spots = spaceGroups.compactMap { (spaceID, locations) -> ParkingSpot? in
+            guard let first = locations.first else { return nil }
+            
+            return ParkingSpot(
+                id: "metered-\(spaceID)",
+                street: first.street,
+                location: "Metered parking",
+                numberOfSpaces: locations.count,
+                coordinate: first.coordinate,
+                neighborhood: nil,
+                isMetered: true
+            )
+        }
+        
+        print("✅ Successfully parsed \(spots.count) metered spots from \(data.count) rows")
+        return spots
+    }
+}
 

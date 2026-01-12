@@ -51,7 +51,7 @@ struct ContentView: View {
                     Annotation(spot.street, coordinate: spot.coordinate) {
                         ZStack {
                             Circle()
-                                .fill(.orange)
+                                .fill(spot.isMetered ? .red : .orange)
                                 .frame(width: 32, height: 32)
                             Circle()
                                 .stroke(.white, lineWidth: 2)
@@ -127,43 +127,69 @@ struct ContentView: View {
     
     private func loadParkingSpots() {
         print("📍 Attempting to load parking spots...")
-        guard let url = Bundle.main.url(forResource: "unmetered", withExtension: "json") else {
-            print("❌ Could not find unmetered.json in bundle")
-            print("Bundle path: \(Bundle.main.bundlePath)")
-            return
+        var allSpots: [ParkingSpot] = []
+        
+        // Load unmetered parking spots
+        if let url = Bundle.main.url(forResource: "unmetered", withExtension: "json") {
+            print("✅ Found unmetered.json file at: \(url)")
+            
+            do {
+                let data = try Data(contentsOf: url)
+                print("✅ Loaded \(data.count) bytes of unmetered data")
+                
+                let response = try JSONDecoder().decode(UnmeteredParkingResponse.self, from: data)
+                print("✅ Decoded unmetered JSON response with \(response.data.count) rows")
+                
+                let unmeteredSpots = response.toParkingSpots()
+                allSpots.append(contentsOf: unmeteredSpots)
+                print("✅ Loaded \(unmeteredSpots.count) unmetered parking spots")
+            } catch {
+                print("❌ Error loading unmetered parking spots: \(error)")
+            }
+        } else {
+            print("⚠️ Could not find unmetered.json in bundle")
         }
         
-        print("✅ Found JSON file at: \(url)")
-        
-        do {
-            let data = try Data(contentsOf: url)
-            print("✅ Loaded \(data.count) bytes of data")
+        // Load metered parking spots
+        if let url = Bundle.main.url(forResource: "metered", withExtension: "json") {
+            print("✅ Found metered.json file at: \(url)")
             
-            let response = try JSONDecoder().decode(UnmeteredParkingResponse.self, from: data)
-            print("✅ Decoded JSON response with \(response.data.count) rows")
-            
-            parkingSpots = response.toParkingSpots()
-            print("✅ Loaded \(parkingSpots.count) parking spots")
-            
-            if let first = parkingSpots.first {
-                print("📌 First spot: \(first.street) at (\(first.coordinate.latitude), \(first.coordinate.longitude))")
-            }
-        } catch {
-            print("❌ Error loading parking spots: \(error)")
-            if let decodingError = error as? DecodingError {
-                switch decodingError {
-                case .keyNotFound(let key, let context):
-                    print("Key '\(key)' not found:", context.debugDescription)
-                case .valueNotFound(let value, let context):
-                    print("Value '\(value)' not found:", context.debugDescription)
-                case .typeMismatch(let type, let context):
-                    print("Type '\(type)' mismatch:", context.debugDescription)
-                case .dataCorrupted(let context):
-                    print("Data corrupted:", context.debugDescription)
-                @unknown default:
-                    print("Unknown decoding error")
+            do {
+                let data = try Data(contentsOf: url)
+                print("✅ Loaded \(data.count) bytes of metered data")
+                
+                let response = try JSONDecoder().decode(MeteredParkingResponse.self, from: data)
+                print("✅ Decoded metered JSON response with \(response.data.count) rows")
+                
+                let meteredSpots = response.toParkingSpots()
+                allSpots.append(contentsOf: meteredSpots)
+                print("✅ Loaded \(meteredSpots.count) metered parking spots")
+            } catch {
+                print("❌ Error loading metered parking spots: \(error)")
+                if let decodingError = error as? DecodingError {
+                    switch decodingError {
+                    case .keyNotFound(let key, let context):
+                        print("Key '\(key)' not found:", context.debugDescription)
+                    case .valueNotFound(let value, let context):
+                        print("Value '\(value)' not found:", context.debugDescription)
+                    case .typeMismatch(let type, let context):
+                        print("Type '\(type)' mismatch:", context.debugDescription)
+                    case .dataCorrupted(let context):
+                        print("Data corrupted:", context.debugDescription)
+                    @unknown default:
+                        print("Unknown decoding error")
+                    }
                 }
             }
+        } else {
+            print("⚠️ Could not find metered.json in bundle")
+        }
+        
+        parkingSpots = allSpots
+        print("✅ Total loaded: \(parkingSpots.count) parking spots (\(parkingSpots.filter(\.isMetered).count) metered, \(parkingSpots.filter { !$0.isMetered }.count) unmetered)")
+        
+        if let first = parkingSpots.first {
+            print("📌 First spot: \(first.street) at (\(first.coordinate.latitude), \(first.coordinate.longitude))")
         }
     }
 }
@@ -196,11 +222,20 @@ struct ParkingSpotDetailView: View {
                 }
                 
                 Section("Parking Information") {
+                    LabeledContent("Type") {
+                        HStack {
+                            Image(systemName: spot.isMetered ? "dollarsign.circle.fill" : "parkingsign.circle.fill")
+                                .foregroundStyle(spot.isMetered ? .red : .orange)
+                            Text(spot.isMetered ? "Metered" : "Unmetered")
+                                .font(.headline)
+                        }
+                    }
+                    
                     if let spaces = spot.numberOfSpaces {
                         LabeledContent("Number of Spaces") {
                             HStack {
                                 Image(systemName: "parkingsign.circle.fill")
-                                    .foregroundStyle(.red)
+                                    .foregroundStyle(spot.isMetered ? .red : .orange)
                                 Text("\(spaces)")
                                     .font(.headline)
                             }
