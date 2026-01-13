@@ -35,14 +35,34 @@ struct ContentView: View {
     @State private var cameraPosition: MapCameraPosition
     @State private var selectedSpotID: String?
     @State private var showingDetail = false
+    @State private var showingInfo = false
+    @State private var visibleRegion: MKCoordinateRegion?
     
     private var selectedSpot: ParkingSpot? {
         guard let id = selectedSpotID else { return nil }
         return parkingSpots.first { $0.id == id }
     }
+    
+    private var visibleSpots: [ParkingSpot] {
+        guard let region = visibleRegion else { return parkingSpots }
+        
+        return parkingSpots.filter { spot in
+            let latInRange = abs(spot.coordinate.latitude - region.center.latitude) <= region.span.latitudeDelta / 2
+            let lonInRange = abs(spot.coordinate.longitude - region.center.longitude) <= region.span.longitudeDelta / 2
+            return latInRange && lonInRange
+        }
+    }
+    
+    private var visibleMeteredCount: Int {
+        visibleSpots.filter(\.isMetered).count
+    }
+    
+    private var visibleUnmeteredCount: Int {
+        visibleSpots.filter { !$0.isMetered }.count
+    }
 
     var body: some View {
-        ZStack(alignment: .top) {
+        ZStack {
             Map(position: $cameraPosition, selection: $selectedSpotID) {
                 UserAnnotation()
                 
@@ -65,21 +85,62 @@ struct ContentView: View {
                     .tag(spot.id)
                 }
             }
+            .onMapCameraChange { context in
+                visibleRegion = context.region
+            }
             .mapControls {
                 MapUserLocationButton()
                 MapCompass()
                 MapScaleView()
             }
             
-            // Debug overlay
+            // Visible spots overlay
             if !parkingSpots.isEmpty {
-                Text("\(parkingSpots.count) spots loaded")
-                    .font(.caption)
-                    .padding(8)
-                    .background(.ultraThinMaterial)
-                    .cornerRadius(8)
-                    .padding()
+                VStack(alignment: .leading, spacing: 4) {
+                    let spots = visibleSpots.count != 1 ? "Locations" : "Location"
+                    Text("MotoParkSF")
+                        .font(.title3.bold())
+                    Text("\(visibleSpots.count) \(spots)")
+                        .font(.caption.bold())
+                    HStack(spacing: 12) {
+                        HStack(spacing: 4) {
+                            Circle()
+                                .fill(.red)
+                                .frame(width: 8, height: 8)
+                            Text("\(visibleMeteredCount) metered")
+                                .font(.caption2)
+                        }
+                        HStack(spacing: 4) {
+                            Circle()
+                                .fill(.orange)
+                                .frame(width: 8, height: 8)
+                            Text("\(visibleUnmeteredCount) unmetered")
+                                .font(.caption2)
+                        }
+                    }
+                }
+                .padding(8)
+                .background(.ultraThinMaterial)
+                .cornerRadius(8)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                .padding()
             }
+            
+            // Info button
+            Button {
+                showingInfo = true
+            } label: {
+                Image(systemName: "info.circle.fill")
+                    .font(.system(size: 32))
+                    .foregroundStyle(.blue)
+                    .background(
+                        Circle()
+                            .fill(.ultraThinMaterial)
+                            .frame(width: 40, height: 40)
+                    )
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
+            .padding()
         }
         .onChange(of: selectedSpotID) { oldValue, newValue in
             if newValue != nil {
@@ -93,6 +154,13 @@ struct ContentView: View {
                 ParkingSpotDetailView(spot: spot)
                     .presentationDetents([.medium, .large])
             }
+        }
+        .alert("MotoPark SF", isPresented: $showingInfo) {
+            Button("OK") {
+                showingInfo = false
+            }
+        } message: {
+            Text("Find motorcycle parking spots in San Francisco. Tap on any marker to view details and get directions. Red markers indicate metered parking, orange markers show unmetered spots.")
         }
         .task {
             loadParkingSpots()
@@ -255,7 +323,8 @@ struct ParkingSpotDetailView: View {
                         LabeledContent("Number of Spaces") {
                             HStack {
                                 Image(systemName: "parkingsign.circle.fill")
-                                    .foregroundStyle(spot.isMetered ? .red : .orange)
+                                    // .foregroundStyle(spot.isMetered ? .red : .orange)
+                                    .foregroundStyle(.green)
                                 Text("\(spaces)")
                                     .font(.headline)
                             }
@@ -265,19 +334,21 @@ struct ParkingSpotDetailView: View {
                             .foregroundStyle(.secondary)
                     }
                 }
-                
-                Section("Coordinates") {
-                    LabeledContent("Latitude", value: String(format: "%.6f", spot.coordinate.latitude))
-                    LabeledContent("Longitude", value: String(format: "%.6f", spot.coordinate.longitude))
-                    
+                Section {
                     Button {
                         openInMaps()
                     } label: {
-                        Label("Open in Maps", systemImage: "map.fill")
+                        VStack {
+                            Label("Open in Maps", systemImage: "map.fill")
+                        }
                     }
+                } footer: {
+                    Text(String(format: "(%.6f, %.6f)",
+                                spot.coordinate.latitude,
+                                spot.coordinate.longitude))
+                    .frame(maxWidth: .infinity, alignment: .trailing)
                 }
             }
-            // .navigationTitle(spot.isMetered ? "Metered Parking Spots" : "Unmetered Parking Spots")
             .navigationTitle("📍 \(spot.street.capitalized)")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
