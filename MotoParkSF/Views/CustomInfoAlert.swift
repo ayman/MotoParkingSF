@@ -7,7 +7,6 @@
 
 import SwiftUI
 
-// Custom Info Alert with clickable links
 struct CustomInfoAlert: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.openURL) private var openURL
@@ -22,13 +21,10 @@ struct CustomInfoAlert: View {
                     
                     Text("Data from data.sfgov.gov:\n[Unmetered Parking](https://data.sfgov.org/Transportation/Motorcycle-Parking-Unmetered/egmb-2zhs/about_data) • [Metered Parking](https://data.sfgov.org/Transportation/Metered-motorcycle-spaces/uf55-k7py/about_data)")
                         .font(.body)
+                    Text("The data isn't updated by the city very often so some locations may be decommissioned.")
+                        .font(.footnote)
                     
                     Text("[https://shamur.ai](https://shamur.ai)")
-                    
-//                    LinkButton(
-//                        title: "https://shamur.ai",
-//                        url: URL(string: "https://shamur.ai")!
-//                    )
                 }
                 .padding()
             }

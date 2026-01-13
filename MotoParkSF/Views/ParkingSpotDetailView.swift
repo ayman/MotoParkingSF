@@ -9,7 +9,7 @@ import SwiftUI
 import CoreLocation
 import MapKit
 
-// Detail view for parking spot information
+
 struct ParkingSpotDetailView: View {
     let spot: ParkingSpot
     @Environment(\.dismiss) private var dismiss
