@@ -213,16 +213,23 @@ struct ParkingSpotDetailView: View {
     var body: some View {
         NavigationStack {
             List {
-                Section("Location") {
-                    if !spot.isMetered {
+                if !spot.isMetered {
+                    Section("Location") {
                         LabeledContent("Cross Street", value: spot.location.capitalized)
+                        
+                        if let neighborhood = spot.neighborhood {
+                            LabeledContent("Neighborhood", value: neighborhood)
+                        }
                     }
-                    
+                } else {
                     if let neighborhood = spot.neighborhood {
-                        LabeledContent("Neighborhood", value: neighborhood)
+                        if neighborhood.trimmingCharacters(in: .whitespacesAndNewlines) != "" {
+                            Section("Location") {
+                                LabeledContent("Neighborhood", value: neighborhood)
+                            }
+                        }
                     }
                 }
-                
                 Section("Parking Information") {
                     LabeledContent("Type") {
                         HStack {
