@@ -97,14 +97,14 @@ struct ContentView: View {
         .task {
             loadParkingSpots()
         }
-        .onChange(of: locationManager.userLocation) { oldValue, newValue in
-            if let location = newValue {
-                cameraPosition = .region(MKCoordinateRegion(
-                    center: location.coordinate,
-                    span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
-                ))
-            }
-        }
+//        .onChange(of: locationManager.userLocation) { oldValue, newValue in
+//            if let location = newValue {
+//                cameraPosition = .region(MKCoordinateRegion(
+//                    center: location.coordinate,
+//                    span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
+//                ))
+//            }
+//        }
     }
     
     init(locationManager: LocationManager = LocationManager()) {
