@@ -37,20 +37,20 @@ struct ParkingSpotDetailView: View {
                 Section("Parking Information") {
                     LabeledContent("Type") {
                         HStack {
-                            Image(systemName: spot.isMetered ? "dollarsign.circle.fill" : "parkingsign.circle.fill")
-                                .foregroundStyle(spot.isMetered ? .red : .orange)
                             Text(spot.isMetered ? "Metered" : "Unmetered")
                                 .font(.headline)
+                            Image(systemName: spot.isMetered ? "dollarsign.circle.fill" : "parkingsign.circle.fill")
+                                .foregroundStyle(spot.isMetered ? .red : .orange)
                         }
                     }
                     
                     if spot.isMetered, let rateDescription = spot.rateDescription {
                         LabeledContent("Rate") {
                             HStack {
-                                Image(systemName: "dollarsign.circle")
-                                    .foregroundStyle(.red)
                                 Text(rateDescription)
                                     .font(.headline)
+                                Image(systemName: "dollarsign.circle")
+                                    .foregroundStyle(.red)
                             }
                         }
                     }
@@ -58,11 +58,11 @@ struct ParkingSpotDetailView: View {
                     if let spaces = spot.numberOfSpaces {
                         LabeledContent("Number of Spaces") {
                             HStack {
+                                Text("\(spaces)")
+                                    .font(.headline)
                                 Image(systemName: "parkingsign.circle.fill")
                                     // .foregroundStyle(spot.isMetered ? .red : .orange)
                                     .foregroundStyle(.green)
-                                Text("\(spaces)")
-                                    .font(.headline)
                             }
                         }
                     } else {
@@ -112,11 +112,22 @@ struct ParkingSpotDetailView: View {
 
 #Preview {
     ParkingSpotDetailView(spot: ParkingSpot(id: "1",
-                                      street: "444 Castro St",
-                                      location: "Market Street",
-                                      numberOfSpaces: 2,
-                                      coordinate: CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194),
-                                      neighborhood: "Castro",
-                                      isMetered: false,
-                                      rateCode: "0"))
+                                            street: "444 Castro St",
+                                            location: "Market Street",
+                                            numberOfSpaces: 2,
+                                            coordinate: CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194),
+                                            neighborhood: "Castro",
+                                            isMetered: false,
+                                            rateCode: "0"))
+}
+
+#Preview {
+    ParkingSpotDetailView(spot: ParkingSpot(id: "1",
+                                            street: "444 Castro St",
+                                            location: "Market Street",
+                                            numberOfSpaces: 2,
+                                            coordinate: CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194),
+                                            neighborhood: "Castro",
+                                            isMetered: true,
+                                            rateCode: "0"))
 }
