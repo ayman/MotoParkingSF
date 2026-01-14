@@ -15,8 +15,8 @@ struct SearchedLocationDetailView: View {
     var body: some View {
         NavigationStack {
             List {
-                Section("Location Details") {
-                    LabeledContent("Name", value: location.name)
+                Section("Location") {
+                    // LabeledContent("Name", value: location.name)
 
                     LabeledContent("Address") {
                         Text(location.address)

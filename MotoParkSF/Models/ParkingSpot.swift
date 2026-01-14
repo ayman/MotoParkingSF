@@ -212,8 +212,17 @@ struct MeteredParkingResponse: Codable {
     func toParkingSpots() -> [ParkingSpot] {
         print("🔄 Processing \(data.count) metered parking rows...")
 
+        // Helper struct to group parking space data
+        struct SpaceGroup {
+            let street: String
+            let coordinate: CLLocationCoordinate2D
+            let rateCode: String?
+            let neighborhood: String?
+            var count: Int
+        }
+
         // First, collect all rows grouped by space ID
-        var spaceGroups: [String: (street: String, coordinate: CLLocationCoordinate2D, rateCode: String?, neighborhood: String?, count: Int)] = [:]
+        var spaceGroups: [String: SpaceGroup] = [:]
 
         for row in data {
             guard row.count > 24 else { continue }
@@ -270,16 +279,11 @@ struct MeteredParkingResponse: Codable {
             )
 
             // Group by space ID - if already exists, just increment count
-            if let existing = spaceGroups[spaceID] {
-                spaceGroups[spaceID] = (
-                    street: existing.street,
-                    coordinate: existing.coordinate,
-                    rateCode: existing.rateCode,
-                    neighborhood: existing.neighborhood,
-                    count: existing.count + 1
-                )
+            if var existing = spaceGroups[spaceID] {
+                existing.count += 1
+                spaceGroups[spaceID] = existing
             } else {
-                spaceGroups[spaceID] = (
+                spaceGroups[spaceID] = SpaceGroup(
                     street: street,
                     coordinate: coordinate,
                     rateCode: rateCode,
