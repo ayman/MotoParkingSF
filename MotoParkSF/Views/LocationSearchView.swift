@@ -61,34 +61,13 @@ class LocationSearchViewModel: NSObject, MKLocalSearchCompleterDelegate {
             let response = try await search.start()
             if let item = response.mapItems.first {
                 let region = MKCoordinateRegion(
-                    center: item.placemark.coordinate,
+                    center: item.location.coordinate,
                     span: MKCoordinateSpan(latitudeDelta: 0.005, longitudeDelta: 0.005)
                 )
-
-                // Build address string
-                var addressComponents: [String] = []
-                if let thoroughfare = item.placemark.thoroughfare {
-                    addressComponents.append(thoroughfare)
-                }
-                if let subThoroughfare = item.placemark.subThoroughfare {
-                    addressComponents.insert(subThoroughfare, at: 0)
-                }
-                if let locality = item.placemark.locality {
-                    addressComponents.append(locality)
-                }
-                if let administrativeArea = item.placemark.administrativeArea {
-                    addressComponents.append(administrativeArea)
-                }
-                if let postalCode = item.placemark.postalCode {
-                    addressComponents.append(postalCode)
-                }
-
-                let address = addressComponents.isEmpty ? "Address not available" : addressComponents.joined(separator: ", ")
-
                 let searchedLocation = SearchedLocation(
                     name: item.name ?? completion.title,
-                    address: address,
-                    coordinate: item.placemark.coordinate,
+                    address: (item.address?.fullAddress ?? (item.address?.shortAddress ?? "")),
+                    coordinate: item.location.coordinate,
                     phoneNumber: item.phoneNumber,
                     mapItem: item
                 )

@@ -13,15 +13,19 @@ struct SearchedLocationDetailView: View {
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
+        let addressParts = location.address.components(separatedBy: ", ")
         NavigationStack {
             List {
                 Section("Location") {
-                    // LabeledContent("Name", value: location.name)
-
                     LabeledContent("Address") {
-                        Text(location.address)
-                            .multilineTextAlignment(.trailing)
+                        VStack {
+                            ForEach(addressParts, id: \.self) { item in
+                                Text(item)
+                                    .frame(maxWidth: .infinity, alignment: .init(horizontal: .trailing, vertical: .top))
+                            }
+                        }
                     }
+                    .labeledContentStyle(TopLabeledContentStyle())
 
                     if let phone = location.phoneNumber {
                         LabeledContent("Phone") {
@@ -60,8 +64,25 @@ struct SearchedLocationDetailView: View {
     }
 }
 
+// Source - https://stackoverflow.com/a/79751149
+// Posted by Benzy Neez, modified by community. See post 'Timeline' for change history
+// Retrieved 2026-01-13, License - CC BY-SA 4.0
+
+struct TopLabeledContentStyle: LabeledContentStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        HStack(alignment: .firstTextBaseline) {
+            configuration.label
+                .fontWeight(.semibold)
+            configuration.content
+                .foregroundStyle(.secondary)
+        }
+    }
+}
+
 #Preview {
-    let previewMapItem = MKMapItem(placemark: MKPlacemark(coordinate: CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194)))
+    let previewMapItem = MKMapItem(location: CLLocation(latitude: 37.7956,
+                                             longitude: -122.3933),
+                        address: MKAddress(fullAddress: "1 Ferry Building, San Francisco, CA 94111", shortAddress: "1 Ferry Building"))
 
     SearchedLocationDetailView(
         location: SearchedLocation(
