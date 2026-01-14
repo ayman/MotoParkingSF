@@ -26,7 +26,7 @@ struct ParkingSpotDetailView: View {
                     }
                 } else {
                     if let neighborhood = spot.neighborhood {
-                        if neighborhood.trimmingCharacters(in: .whitespacesAndNewlines) != "" {
+                        if !neighborhood.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                             Section("Location") {
                                 LabeledContent("Neighborhood", value: neighborhood)
                             }
