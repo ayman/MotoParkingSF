@@ -11,7 +11,7 @@ struct LinkButton: View {
     let title: String
     let url: URL
     @Environment(\.openURL) private var openURL
-    
+
     var body: some View {
         Button {
             openURL(url)
@@ -28,7 +28,6 @@ struct LinkButton: View {
         }
     }
 }
-
 
 #Preview {
     LinkButton(title: "Website",

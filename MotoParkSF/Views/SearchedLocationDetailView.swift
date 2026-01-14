@@ -11,18 +11,18 @@ import MapKit
 struct SearchedLocationDetailView: View {
     let location: SearchedLocation
     @Environment(\.dismiss) private var dismiss
-    
+
     var body: some View {
         NavigationStack {
             List {
                 Section("Location Details") {
                     LabeledContent("Name", value: location.name)
-                    
+
                     LabeledContent("Address") {
                         Text(location.address)
                             .multilineTextAlignment(.trailing)
                     }
-                    
+
                     if let phone = location.phoneNumber {
                         LabeledContent("Phone") {
                             Button(phone) {
@@ -33,7 +33,7 @@ struct SearchedLocationDetailView: View {
                         }
                     }
                 }
-                
+
                 Section {
                     Button {
                         location.mapItem.openInMaps()
@@ -62,7 +62,7 @@ struct SearchedLocationDetailView: View {
 
 #Preview {
     let previewMapItem = MKMapItem(placemark: MKPlacemark(coordinate: CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194)))
-    
+
     SearchedLocationDetailView(
         location: SearchedLocation(
             name: "Ferry Building",

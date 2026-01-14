@@ -9,18 +9,17 @@ import SwiftUI
 import CoreLocation
 import MapKit
 
-
 struct ParkingSpotDetailView: View {
     let spot: ParkingSpot
     @Environment(\.dismiss) private var dismiss
-    
+
     var body: some View {
         NavigationStack {
             List {
                 if !spot.isMetered {
                     Section("Location") {
                         LabeledContent("Cross Street", value: spot.location.capitalized)
-                        
+
                         if let neighborhood = spot.neighborhood {
                             LabeledContent("Neighborhood", value: neighborhood)
                         }
@@ -43,7 +42,7 @@ struct ParkingSpotDetailView: View {
                                 .foregroundStyle(spot.isMetered ? .red : .orange)
                         }
                     }
-                    
+
                     if spot.isMetered, let rateDescription = spot.rateDescription {
                         LabeledContent("Rate") {
                             HStack {
@@ -54,7 +53,7 @@ struct ParkingSpotDetailView: View {
                             }
                         }
                     }
-                    
+
                     if let spaces = spot.numberOfSpaces {
                         LabeledContent("Number of Spaces") {
                             HStack {
@@ -96,7 +95,7 @@ struct ParkingSpotDetailView: View {
             }
         }
     }
-    
+
     private func openInMaps() {
         // let placemark = MKPlacemark(coordinate: spot.coordinate)
         // let mapItem = MKMapItem(placemark: placemark)
@@ -108,7 +107,6 @@ struct ParkingSpotDetailView: View {
         mapItem.openInMaps()
     }
 }
-
 
 #Preview {
     ParkingSpotDetailView(spot: ParkingSpot(id: "1",

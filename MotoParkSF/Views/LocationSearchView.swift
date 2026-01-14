@@ -13,10 +13,10 @@ class LocationSearchViewModel: NSObject, MKLocalSearchCompleterDelegate {
     var searchQuery = ""
     var searchResults: [MKLocalSearchCompletion] = []
     var isSearching = false
-    
+
     private let completer: MKLocalSearchCompleter
     private let region: MKCoordinateRegion
-    
+
     init(region: MKCoordinateRegion) {
         self.region = region
         self.completer = MKLocalSearchCompleter()
@@ -25,7 +25,7 @@ class LocationSearchViewModel: NSObject, MKLocalSearchCompleterDelegate {
         self.completer.region = region
         self.completer.resultTypes = [.address, .pointOfInterest]
     }
-    
+
     func updateSearchQuery(_ query: String) {
         searchQuery = query
         if query.isEmpty {
@@ -36,27 +36,27 @@ class LocationSearchViewModel: NSObject, MKLocalSearchCompleterDelegate {
             completer.queryFragment = query
         }
     }
-    
+
     func updateRegion(_ region: MKCoordinateRegion) {
         completer.region = region
     }
-    
+
     // MARK: - MKLocalSearchCompleterDelegate
-    
+
     func completerDidUpdateResults(_ completer: MKLocalSearchCompleter) {
         searchResults = completer.results
     }
-    
+
     func completer(_ completer: MKLocalSearchCompleter, didFailWithError error: Error) {
         print("❌ Search completer error: \(error.localizedDescription)")
     }
-    
+
     func performSearch(for completion: MKLocalSearchCompletion) async -> (region: MKCoordinateRegion, location: SearchedLocation)? {
         let searchRequest = MKLocalSearch.Request(completion: completion)
         searchRequest.resultTypes = [.address, .pointOfInterest]
-        
+
         let search = MKLocalSearch(request: searchRequest)
-        
+
         do {
             let response = try await search.start()
             if let item = response.mapItems.first {
@@ -64,7 +64,7 @@ class LocationSearchViewModel: NSObject, MKLocalSearchCompleterDelegate {
                     center: item.placemark.coordinate,
                     span: MKCoordinateSpan(latitudeDelta: 0.005, longitudeDelta: 0.005)
                 )
-                
+
                 // Build address string
                 var addressComponents: [String] = []
                 if let thoroughfare = item.placemark.thoroughfare {
@@ -82,9 +82,9 @@ class LocationSearchViewModel: NSObject, MKLocalSearchCompleterDelegate {
                 if let postalCode = item.placemark.postalCode {
                     addressComponents.append(postalCode)
                 }
-                
+
                 let address = addressComponents.isEmpty ? "Address not available" : addressComponents.joined(separator: ", ")
-                
+
                 let searchedLocation = SearchedLocation(
                     name: item.name ?? completion.title,
                     address: address,
@@ -92,13 +92,13 @@ class LocationSearchViewModel: NSObject, MKLocalSearchCompleterDelegate {
                     phoneNumber: item.phoneNumber,
                     mapItem: item
                 )
-                
+
                 return (region, searchedLocation)
             }
         } catch {
             print("❌ Search error: \(error.localizedDescription)")
         }
-        
+
         return nil
     }
 }
@@ -109,12 +109,12 @@ struct LocationSearchView: View {
     @Binding var searchedLocation: SearchedLocation?
     @State private var viewModel: LocationSearchViewModel
     @FocusState private var isSearchFieldFocused: Bool
-    
+
     init(cameraPosition: Binding<MapCameraPosition>, visibleRegion: Binding<MKCoordinateRegion?>, searchedLocation: Binding<SearchedLocation?>) {
         _cameraPosition = cameraPosition
         _visibleRegion = visibleRegion
         _searchedLocation = searchedLocation
-        
+
         // Initialize with a default region (San Francisco)
         let defaultRegion = MKCoordinateRegion(
             center: CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194),
@@ -122,21 +122,21 @@ struct LocationSearchView: View {
         )
         _viewModel = State(initialValue: LocationSearchViewModel(region: visibleRegion.wrappedValue ?? defaultRegion))
     }
-    
+
     var body: some View {
         VStack(spacing: 0) {
             // Search field
             HStack(spacing: 8) {
                 Image(systemName: "magnifyingglass")
                     .foregroundStyle(.secondary)
-                
+
                 TextField("Search for a location or address", text: $viewModel.searchQuery)
                     .textFieldStyle(.plain)
                     .focused($isSearchFieldFocused)
-                    .onChange(of: viewModel.searchQuery) { oldValue, newValue in
+                    .onChange(of: viewModel.searchQuery) { _, newValue in
                         viewModel.updateSearchQuery(newValue)
                     }
-                
+
                 if !viewModel.searchQuery.isEmpty {
                     Button {
                         viewModel.searchQuery = ""
@@ -151,7 +151,7 @@ struct LocationSearchView: View {
             .padding(12)
             .background(.ultraThinMaterial)
             .cornerRadius(10)
-            
+
             // Search results
             if !viewModel.searchResults.isEmpty && isSearchFieldFocused {
                 ScrollView {
@@ -162,7 +162,7 @@ struct LocationSearchView: View {
                                     if let searchResult = await viewModel.performSearch(for: result) {
                                         // Set the searched location marker with full details
                                         searchedLocation = searchResult.location
-                                        
+
                                         withAnimation {
                                             cameraPosition = .region(searchResult.region)
                                         }
@@ -186,7 +186,7 @@ struct LocationSearchView: View {
                                 .padding(.vertical, 8)
                                 .padding(.horizontal, 12)
                             }
-                            
+
                             if result != viewModel.searchResults.last {
                                 Divider()
                                     .padding(.leading, 12)

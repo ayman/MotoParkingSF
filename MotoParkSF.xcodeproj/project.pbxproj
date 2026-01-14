@@ -6,6 +6,12 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		E3A4DF432F175E4700B152A4 /* .swiftlint.yml in Resources */ = {isa = PBXBuildFile; fileRef = E3A4DF412F175E4700B152A4 /* .swiftlint.yml */; };
+		E3A4DF442F175E4700B152A4 /* .swiftlint.yml in Resources */ = {isa = PBXBuildFile; fileRef = E3A4DF412F175E4700B152A4 /* .swiftlint.yml */; };
+		E3A4DF462F17604800B152A4 /* .swiftlint.yml in Resources */ = {isa = PBXBuildFile; fileRef = E3A4DF412F175E4700B152A4 /* .swiftlint.yml */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		E37FBB9C2F159864005D1963 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -27,11 +33,25 @@
 		E37FBB8C2F159863005D1963 /* MotoParkSF.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MotoParkSF.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E37FBB9B2F159864005D1963 /* MotoParkSFTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MotoParkSFTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E37FBBA52F159864005D1963 /* MotoParkSFUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MotoParkSFUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		E3A4DF412F175E4700B152A4 /* .swiftlint.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = .swiftlint.yml; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		E3A4DF472F17604B00B152A4 /* Exceptions for "MotoParkSF" folder in "MotoParkSF" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				.swiftlint.yml,
+			);
+			target = E37FBB8B2F159863005D1963 /* MotoParkSF */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		E37FBB8E2F159863005D1963 /* MotoParkSF */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				E3A4DF472F17604B00B152A4 /* Exceptions for "MotoParkSF" folder in "MotoParkSF" target */,
+			);
 			path = MotoParkSF;
 			sourceTree = "<group>";
 		};
@@ -79,6 +99,7 @@
 				E37FBB9E2F159864005D1963 /* MotoParkSFTests */,
 				E37FBBA82F159864005D1963 /* MotoParkSFUITests */,
 				E37FBB8D2F159863005D1963 /* Products */,
+				E3A4DF412F175E4700B152A4 /* .swiftlint.yml */,
 			);
 			sourceTree = "<group>";
 		};
@@ -102,6 +123,7 @@
 				E37FBB882F159863005D1963 /* Sources */,
 				E37FBB892F159863005D1963 /* Frameworks */,
 				E37FBB8A2F159863005D1963 /* Resources */,
+				E3A4DF452F175E6900B152A4 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -212,6 +234,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E3A4DF462F17604800B152A4 /* .swiftlint.yml in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -219,6 +242,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E3A4DF432F175E4700B152A4 /* .swiftlint.yml in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -226,10 +250,32 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E3A4DF442F175E4700B152A4 /* .swiftlint.yml in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		E3A4DF452F175E6900B152A4 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nif [[ \"$(uname -m)\" == arm64 ]]\nthen\n    export PATH=\"/opt/homebrew/bin:$PATH\"\nfi\n\nif command -v swiftlint >/dev/null 2>&1\nthen\n    swiftlint --fix && swiftlint\nelse\n    echo \"warning: `swiftlint` command not found - See https://github.com/realm/SwiftLint#installation for installation instructions.\"\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		E37FBB882F159863005D1963 /* Sources */ = {
@@ -399,7 +445,9 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 4C99K25T93;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.navigation";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "We need GPS information to show you parking on the map.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -433,7 +481,9 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 4C99K25T93;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.navigation";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "We need GPS information to show you parking on the map.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;

@@ -10,24 +10,6 @@ import SwiftData
 import MapKit
 import CoreLocation
 
-@Observable
-class LocationManager: NSObject, CLLocationManagerDelegate {
-    private let manager = CLLocationManager()
-    var userLocation: CLLocation?
-    
-    override init() {
-        super.init()
-        manager.delegate = self
-        manager.desiredAccuracy = kCLLocationAccuracyBest
-        manager.requestWhenInUseAuthorization()
-        manager.startUpdatingLocation()
-    }
-    
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        userLocation = locations.first
-    }
-}
-
 struct ContentView: View {
     // @Environment(\.modelContext) private var modelContext
     @State private var locationManager: LocationManager
@@ -39,26 +21,26 @@ struct ContentView: View {
     @State private var visibleRegion: MKCoordinateRegion?
     @State private var searchedLocation: SearchedLocation?
     @State private var showingSearchedLocationDetail = false
-    
+
     private var selectedSpot: ParkingSpot? {
         guard let id = selectedSpotID else { return nil }
         return parkingSpots.first { $0.id == id }
     }
-    
+
     private var visibleSpots: [ParkingSpot] {
         guard let region = visibleRegion else { return parkingSpots }
-        
+
         return parkingSpots.filter { spot in
             let latInRange = abs(spot.coordinate.latitude - region.center.latitude) <= region.span.latitudeDelta / 2
             let lonInRange = abs(spot.coordinate.longitude - region.center.longitude) <= region.span.longitudeDelta / 2
             return latInRange && lonInRange
         }
     }
-    
+
     private var visibleMeteredCount: Int {
         visibleSpots.filter(\.isMetered).count
     }
-    
+
     private var visibleUnmeteredCount: Int {
         visibleSpots.filter { !$0.isMetered }.count
     }
@@ -67,7 +49,7 @@ struct ContentView: View {
         ZStack {
             Map(position: $cameraPosition, selection: $selectedSpotID) {
                 UserAnnotation()
-                
+
                 // Add searched location marker
                 if let searchLocation = searchedLocation {
                     Annotation("Searched Location", coordinate: searchLocation.coordinate) {
@@ -89,7 +71,7 @@ struct ContentView: View {
                     }
                     .annotationTitles(.hidden)
                 }
-                
+
                 // Add parking spot markers
                 ForEach(parkingSpots) { spot in
                     Annotation(spot.street, coordinate: spot.coordinate) {
@@ -117,7 +99,7 @@ struct ContentView: View {
                 MapCompass()
                 MapScaleView()
             }
-            
+
             // Visible spots overlay - at top right
             if !parkingSpots.isEmpty {
                 VStack(alignment: .leading, spacing: 4) {
@@ -164,11 +146,11 @@ struct ContentView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
                 .padding()
             }
-            
+
             // Search field and Info button - positioned at bottom
             VStack {
                 Spacer()
-                
+
                 HStack(alignment: .center, spacing: 16) {
                     // Search field
                     LocationSearchView(
@@ -176,7 +158,7 @@ struct ContentView: View {
                         visibleRegion: $visibleRegion,
                         searchedLocation: $searchedLocation
                     )
-                    
+
 //                    // Info button
 //                    Button {
 //                        showingInfo = true
@@ -196,7 +178,7 @@ struct ContentView: View {
                 .padding(.bottom, 8) // Extra padding from bottom edge
             }
         }
-        .onChange(of: selectedSpotID) { oldValue, newValue in
+        .onChange(of: selectedSpotID) { _, newValue in
             if newValue != nil {
                 showingDetail = true
             }
@@ -230,10 +212,10 @@ struct ContentView: View {
 //            }
 //        }
     }
-    
+
     init(locationManager: LocationManager = LocationManager()) {
         _locationManager = State(initialValue: locationManager)
-        
+
         // Set initial camera position
         if let location = locationManager.userLocation {
             _cameraPosition = State(initialValue: .region(MKCoordinateRegion(
@@ -248,22 +230,22 @@ struct ContentView: View {
             )))
         }
     }
-    
+
     private func loadParkingSpots() {
         print("📍 Attempting to load parking spots...")
         var allSpots: [ParkingSpot] = []
-        
+
         // Load unmetered parking spots
         if let url = Bundle.main.url(forResource: "unmetered", withExtension: "json") {
             print("✅ Found unmetered.json file at: \(url)")
-            
+
             do {
                 let data = try Data(contentsOf: url)
                 print("✅ Loaded \(data.count) bytes of unmetered data")
-                
+
                 let response = try JSONDecoder().decode(UnmeteredParkingResponse.self, from: data)
                 print("✅ Decoded unmetered JSON response with \(response.data.count) rows")
-                
+
                 let unmeteredSpots = response.toParkingSpots()
                 allSpots.append(contentsOf: unmeteredSpots)
                 print("✅ Loaded \(unmeteredSpots.count) unmetered parking spots")
@@ -273,18 +255,18 @@ struct ContentView: View {
         } else {
             print("⚠️ Could not find unmetered.json in bundle")
         }
-        
+
         // Load metered parking spots
         if let url = Bundle.main.url(forResource: "metered", withExtension: "json") {
             print("✅ Found metered.json file at: \(url)")
-            
+
             do {
                 let data = try Data(contentsOf: url)
                 print("✅ Loaded \(data.count) bytes of metered data")
-                
+
                 let response = try JSONDecoder().decode(MeteredParkingResponse.self, from: data)
                 print("✅ Decoded metered JSON response with \(response.data.count) rows")
-                
+
                 let meteredSpots = response.toParkingSpots()
                 allSpots.append(contentsOf: meteredSpots)
                 print("✅ Loaded \(meteredSpots.count) metered parking spots")
@@ -308,10 +290,10 @@ struct ContentView: View {
         } else {
             print("⚠️ Could not find metered.json in bundle")
         }
-        
+
         parkingSpots = allSpots
         print("✅ Total loaded: \(parkingSpots.count) parking spots (\(parkingSpots.filter(\.isMetered).count) metered, \(parkingSpots.filter { !$0.isMetered }.count) unmetered)")
-        
+
         if let first = parkingSpots.first {
             print("📌 First spot: \(first.street) at (\(first.coordinate.latitude), \(first.coordinate.longitude))")
         }
@@ -325,6 +307,6 @@ struct ContentView: View {
         latitude: 37.7749,
         longitude: -122.4194
     )
-    
+
     return ContentView(locationManager: previewLocationManager)
 }

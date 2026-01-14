@@ -23,10 +23,10 @@ struct ParkingSpot: Identifiable, Hashable {
     let neighborhood: String?
     let isMetered: Bool
     let rateCode: String?
-    
+
     var rateDescription: String? {
         guard let rateCode = rateCode else { return nil }
-        
+
         switch rateCode {
         case "MC1":
             return "$0.70/hour"
@@ -40,12 +40,12 @@ struct ParkingSpot: Identifiable, Hashable {
             return nil
         }
     }
-    
+
     // Implement Hashable
     func hash(into hasher: inout Hasher) {
         hasher.combine(id)
     }
-    
+
     static func == (lhs: ParkingSpot, rhs: ParkingSpot) -> Bool {
         lhs.id == rhs.id
     }
@@ -54,13 +54,13 @@ struct ParkingSpot: Identifiable, Hashable {
 // Response structure for the JSON file
 struct UnmeteredParkingResponse: Codable {
     let data: [[AnyCodable]]
-    
+
     struct AnyCodable: Codable {
         let value: Any
-        
+
         init(from decoder: Decoder) throws {
             let container = try decoder.singleValueContainer()
-            
+
             if let string = try? container.decode(String.self) {
                 value = string
             } else if let int = try? container.decode(Int.self) {
@@ -75,10 +75,10 @@ struct UnmeteredParkingResponse: Codable {
                 throw DecodingError.dataCorruptedError(in: container, debugDescription: "Cannot decode value")
             }
         }
-        
+
         func encode(to encoder: Encoder) throws {
             var container = encoder.singleValueContainer()
-            
+
             if let string = value as? String {
                 try container.encode(string)
             } else if let int = value as? Int {
@@ -90,24 +90,24 @@ struct UnmeteredParkingResponse: Codable {
             }
         }
     }
-    
+
     func toParkingSpots() -> [ParkingSpot] {
         print("🔄 Processing \(data.count) rows...")
-        
+
         let spots = data.compactMap { row -> ParkingSpot? in
             guard row.count > 19 else { return nil }
-            
+
             // Index 10 is the street name (e.g., "STEINER ST")
             // Index 12 is the location/full address (e.g., "1000 STEINER ST")
             guard let fullAddress = row[12].value as? String,
                   let streetName = row[10].value as? String else {
                 return nil
             }
-            
+
             // Use the full address from index 12 as the street display
             let street = fullAddress
             let location = streetName
-            
+
             // Parse numberOfSpaces - it's a String in the JSON, need to convert
             let numberOfSpaces: Int?
             if let spacesString = row[13].value as? String {
@@ -115,14 +115,14 @@ struct UnmeteredParkingResponse: Codable {
             } else {
                 numberOfSpaces = row[13].value as? Int
             }
-            
+
             let neighborhood = row[19].value as? String
-            
+
             // Parse the WKT Point format: "POINT (longitude latitude)"
             guard let pointString = row[17].value as? String else {
                 return nil
             }
-            
+
             // Extract coordinates from "POINT (-122.433569267 37.77868774)"
             let pattern = #"POINT \(([+-]?\d+\.?\d*)\s+([+-]?\d+\.?\d*)\)"#
             guard let regex = try? NSRegularExpression(pattern: pattern),
@@ -130,21 +130,21 @@ struct UnmeteredParkingResponse: Codable {
                   match.numberOfRanges == 3 else {
                 return nil
             }
-            
+
             guard let lonRange = Range(match.range(at: 1), in: pointString),
                   let latRange = Range(match.range(at: 2), in: pointString),
                   let lon = Double(pointString[lonRange]),
                   let lat = Double(pointString[latRange]) else {
                 return nil
             }
-            
+
             let coordinate = CLLocationCoordinate2D(
                 latitude: lat,
                 longitude: lon
             )
-            
+
             let id = "\(street)-\(location)"
-            
+
             return ParkingSpot(
                 id: id,
                 street: street,
@@ -166,13 +166,13 @@ struct UnmeteredParkingResponse: Codable {
 // Index 24 contains an array: [ null, "37.798279", "-122.426623", null, false ]
 struct MeteredParkingResponse: Codable {
     let data: [[AnyCodable]]
-    
+
     struct AnyCodable: Codable {
         let value: Any
-        
+
         init(from decoder: Decoder) throws {
             let container = try decoder.singleValueContainer()
-            
+
             if let string = try? container.decode(String.self) {
                 value = string
             } else if let int = try? container.decode(Int.self) {
@@ -191,10 +191,10 @@ struct MeteredParkingResponse: Codable {
                 throw DecodingError.dataCorruptedError(in: container, debugDescription: "Cannot decode value")
             }
         }
-        
+
         func encode(to encoder: Encoder) throws {
             var container = encoder.singleValueContainer()
-            
+
             if let string = value as? String {
                 try container.encode(string)
             } else if let int = value as? Int {
@@ -208,25 +208,25 @@ struct MeteredParkingResponse: Codable {
             }
         }
     }
-    
+
     func toParkingSpots() -> [ParkingSpot] {
         print("🔄 Processing \(data.count) metered parking rows...")
-        
+
         // First, collect all rows grouped by space ID
         var spaceGroups: [String: (street: String, coordinate: CLLocationCoordinate2D, rateCode: String?, neighborhood: String?, count: Int)] = [:]
-        
+
         for row in data {
             guard row.count > 24 else { continue }
-            
+
             // Index 23 contains the space ID
             guard let spaceID = row[23].value as? String else {
                 continue
             }
-            
+
             // Index 21 contains the street number, index 22 contains the street name
             let streetNumber = row[21].value as? String
             let streetName = row[22].value as? String
-            
+
             // Combine street number and name
             let street: String
             if let number = streetNumber, let name = streetName, !number.isEmpty, !name.isEmpty {
@@ -242,19 +242,19 @@ struct MeteredParkingResponse: Codable {
                 }
                 street = fallbackStreet
             }
-            
+
             // Index 19 contains the rate code (MC1, MC2, MC3, MC5)
             let rateCode = row[19].value as? String
-            
+
             // Index 20 contains the neighborhood
             let neighborhood = row[20].value as? String
-            
+
             // Index 24 contains an array with lat/long at indices 1 and 2
             guard let locationArray = row[24].value as? [Any],
                   locationArray.count > 2 else {
                 continue
             }
-            
+
             // Extract latitude and longitude from the array
             // Format: [ null, "37.798279", "-122.426623", null, false ]
             guard let latString = locationArray[1] as? String,
@@ -263,12 +263,12 @@ struct MeteredParkingResponse: Codable {
                   let lon = Double(lonString) else {
                 continue
             }
-            
+
             let coordinate = CLLocationCoordinate2D(
                 latitude: lat,
                 longitude: lon
             )
-            
+
             // Group by space ID - if already exists, just increment count
             if let existing = spaceGroups[spaceID] {
                 spaceGroups[spaceID] = (
@@ -288,7 +288,7 @@ struct MeteredParkingResponse: Codable {
                 )
             }
         }
-        
+
         // Now create one ParkingSpot per space ID with the count
         let spots = spaceGroups.map { (spaceID, info) -> ParkingSpot in
             ParkingSpot(
@@ -302,9 +302,8 @@ struct MeteredParkingResponse: Codable {
                 rateCode: info.rateCode
             )
         }
-        
+
         print("✅ Successfully parsed \(spots.count) metered spots from \(data.count) rows")
         return spots
     }
 }
-
