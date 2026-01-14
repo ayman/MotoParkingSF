@@ -91,6 +91,7 @@ struct ContentView: View {
                     .tag(spot.id)
                 }
             }
+            .mapStyle(.standard)
             .onMapCameraChange { context in
                 visibleRegion = context.region
             }
@@ -300,7 +301,7 @@ struct ContentView: View {
     }
 }
 
-#Preview {
+#Preview("App") {
     let previewLocationManager = LocationManager()
     // Set preview location to San Francisco
     previewLocationManager.userLocation = CLLocation(
@@ -310,3 +311,13 @@ struct ContentView: View {
 
     return ContentView(locationManager: previewLocationManager)
 }
+
+#Preview("Blank Preview") {
+    ContentView()
+}
+
+// Note: MapKit previews often show a blank grid in Xcode Canvas.
+// This is a known limitation - the map will render correctly when you:
+// - Run on the iOS Simulator (⌘R)
+// - Run on a physical device
+// The preview grid shows the correct layout, just not the actual map tiles.
