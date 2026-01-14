@@ -37,6 +37,8 @@ struct ContentView: View {
     @State private var showingDetail = false
     @State private var showingInfo = false
     @State private var visibleRegion: MKCoordinateRegion?
+    @State private var searchedLocation: SearchedLocation?
+    @State private var showingSearchedLocationDetail = false
     
     private var selectedSpot: ParkingSpot? {
         guard let id = selectedSpotID else { return nil }
@@ -66,6 +68,28 @@ struct ContentView: View {
             Map(position: $cameraPosition, selection: $selectedSpotID) {
                 UserAnnotation()
                 
+                // Add searched location marker
+                if let searchLocation = searchedLocation {
+                    Annotation("Searched Location", coordinate: searchLocation.coordinate) {
+                        Button {
+                            showingSearchedLocationDetail = true
+                        } label: {
+                            ZStack {
+                                Circle()
+                                    .fill(.blue)
+                                    .frame(width: 40, height: 40)
+                                Circle()
+                                    .stroke(.white, lineWidth: 3)
+                                    .frame(width: 40, height: 40)
+                                Image(systemName: "mappin.circle.fill")
+                                    .font(.system(size: 20))
+                                    .foregroundStyle(.white)
+                            }
+                        }
+                    }
+                    .annotationTitles(.hidden)
+                }
+                
                 // Add parking spot markers
                 ForEach(parkingSpots) { spot in
                     Annotation(spot.street, coordinate: spot.coordinate) {
@@ -94,12 +118,27 @@ struct ContentView: View {
                 MapScaleView()
             }
             
-            // Visible spots overlay
+            // Visible spots overlay - at top right
             if !parkingSpots.isEmpty {
                 VStack(alignment: .leading, spacing: 4) {
                     let spots = visibleSpots.count != 1 ? "Locations" : "Location"
-                    Text("MotoParkSF")
-                        .font(.title3.bold())
+                    HStack {
+                        Text("MotoParkSF")
+                            .font(.title3.bold())
+                        Button {
+                            showingInfo = true
+                        } label: {
+                            Image(systemName: "info.circle")
+                                .font(.system(size: 24))
+                                .foregroundStyle(.blue)
+                                .background(
+                                    Circle()
+                                        .fill(.ultraThinMaterial)
+                                        .frame(width: 32, height: 32)
+                                )
+                        }
+                        .padding(.leading, 8)
+                    }
                     Text("\(visibleSpots.count) \(spots)")
                         .font(.caption.bold())
                     HStack(spacing: 12) {
@@ -126,21 +165,36 @@ struct ContentView: View {
                 .padding()
             }
             
-            // Info button
-            Button {
-                showingInfo = true
-            } label: {
-                Image(systemName: "info.circle.fill")
-                    .font(.system(size: 32))
-                    .foregroundStyle(.blue)
-                    .background(
-                        Circle()
-                            .fill(.ultraThinMaterial)
-                            .frame(width: 40, height: 40)
+            // Search field and Info button - positioned at bottom
+            VStack {
+                Spacer()
+                
+                HStack(alignment: .center, spacing: 16) {
+                    // Search field
+                    LocationSearchView(
+                        cameraPosition: $cameraPosition,
+                        visibleRegion: $visibleRegion,
+                        searchedLocation: $searchedLocation
                     )
+                    
+//                    // Info button
+//                    Button {
+//                        showingInfo = true
+//                    } label: {
+//                        Image(systemName: "info.circle.fill")
+//                            .font(.system(size: 32))
+//                            .foregroundStyle(.blue)
+//                            .background(
+//                                Circle()
+//                                    .fill(.ultraThinMaterial)
+//                                    .frame(width: 40, height: 40)
+//                            )
+//                    }
+//                    .padding(.leading, 8)
+                }
+                .padding()
+                .padding(.bottom, 8) // Extra padding from bottom edge
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
-            .padding()
         }
         .onChange(of: selectedSpotID) { oldValue, newValue in
             if newValue != nil {
@@ -152,6 +206,12 @@ struct ContentView: View {
         }) {
             if let spot = selectedSpot {
                 ParkingSpotDetailView(spot: spot)
+                    .presentationDetents([.medium, .large])
+            }
+        }
+        .sheet(isPresented: $showingSearchedLocationDetail) {
+            if let location = searchedLocation {
+                SearchedLocationDetailView(location: location)
                     .presentationDetents([.medium, .large])
             }
         }
