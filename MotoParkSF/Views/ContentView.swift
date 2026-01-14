@@ -185,12 +185,12 @@ struct ContentView: View {
         }
         .sheet(isPresented: $showingDetail, onDismiss: {
             selectedSpotID = nil
-        }) {
+        }, content: {
             if let spot = selectedSpot {
                 ParkingSpotDetailView(spot: spot)
                     .presentationDetents([.medium, .large])
             }
-        }
+        })
         .sheet(isPresented: $showingSearchedLocationDetail) {
             if let location = searchedLocation {
                 SearchedLocationDetailView(location: location)
