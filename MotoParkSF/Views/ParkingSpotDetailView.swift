@@ -108,7 +108,7 @@ struct ParkingSpotDetailView: View {
     }
 }
 
-#Preview {
+#Preview("Unmetered") {
     ParkingSpotDetailView(spot: ParkingSpot(id: "1",
                                             street: "444 Castro St",
                                             location: "Market Street",
@@ -119,7 +119,7 @@ struct ParkingSpotDetailView: View {
                                             rateCode: "0"))
 }
 
-#Preview {
+#Preview("Metered") {
     ParkingSpotDetailView(spot: ParkingSpot(id: "1",
                                             street: "444 Castro St",
                                             location: "Market Street",

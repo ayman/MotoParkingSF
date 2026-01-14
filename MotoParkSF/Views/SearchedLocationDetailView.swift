@@ -79,7 +79,7 @@ struct TopLabeledContentStyle: LabeledContentStyle {
     }
 }
 
-#Preview {
+#Preview("Search Detail") {
     let previewMapItem = MKMapItem(location: CLLocation(latitude: 37.7956,
                                              longitude: -122.3933),
                         address: MKAddress(fullAddress: "1 Ferry Building, San Francisco, CA 94111", shortAddress: "1 Ferry Building"))
