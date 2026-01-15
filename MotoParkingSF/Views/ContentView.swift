@@ -23,6 +23,7 @@ struct ContentView: View {
     @State private var showingSearchedLocationDetail = false
     @State private var meteredMetadata: DatasetMetadata?
     @State private var unmeteredMetadata: DatasetMetadata?
+    @State private var hasSetInitialPosition = false
 
     private var selectedSpot: ParkingSpot? {
         guard let id = selectedSpotID else { return nil }
@@ -206,18 +207,19 @@ struct ContentView: View {
             loadParkingSpots()
         }
         .onChange(of: locationManager.userLocation) { _, newValue in
-            // Update camera position when location becomes available
-            // Only move the camera if we don't already have a position set to user's location
-            if let location = newValue {
-                if Self.isInSanFrancisco(location.coordinate) {
-                    // User is in SF, update to their location
-                    cameraPosition = .region(MKCoordinateRegion(
-                        center: location.coordinate,
-                        span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
-                    ))
-                }
-                // If user is not in SF, keep the default SF location (do nothing)
+            // Only update camera position on first location update
+            guard !hasSetInitialPosition, let location = newValue else { return }
+
+            if Self.isInSanFrancisco(location.coordinate) {
+                // User is in SF, update to their location
+                cameraPosition = .region(MKCoordinateRegion(
+                    center: location.coordinate,
+                    span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
+                ))
             }
+            // If user is not in SF, keep the default SF location (do nothing)
+
+            hasSetInitialPosition = true
         }
     }
 
