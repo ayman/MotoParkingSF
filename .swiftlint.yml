@@ -4,9 +4,9 @@ opt_in_rules:
 - empty_count
 - empty_string
 included: # paths to include during linting
-- MotoParkSF
-- MotoParkSFTests
-- MotoParkSFUITests
+- MotoParkingSF
+- MotoParkingSFTests
+- MotoParkingSFUITests
 excluded:
 - Carthage
 - Pods

@@ -119,7 +119,7 @@ struct ContentView: View {
                 VStack(alignment: .leading, spacing: 4) {
                     let spots = visibleSpots.count != 1 ? "Locations" : "Location"
                     HStack {
-                        Text("MotoParkSF")
+                        Text(NameStrings.appName)
                             .font(.title3.bold())
                         Button {
                             showingInfo = true

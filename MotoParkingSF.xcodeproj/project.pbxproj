@@ -30,26 +30,26 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		E37FBB8C2F159863005D1963 /* MotoParkSF.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MotoParkSF.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		E37FBB9B2F159864005D1963 /* MotoParkSFTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MotoParkSFTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		E37FBBA52F159864005D1963 /* MotoParkSFUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MotoParkSFUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		E37FBB8C2F159863005D1963 /* MotoParkingSF.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MotoParkingSF.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		E37FBB9B2F159864005D1963 /* MotoParkingSFTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MotoParkingSFTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		E37FBBA52F159864005D1963 /* MotoParkingSFUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MotoParkingSFUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E3A4DF412F175E4700B152A4 /* .swiftlint.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = .swiftlint.yml; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		E37FBB8E2F159863005D1963 /* MotoParkSF */ = {
+		E37FBB8E2F159863005D1963 /* MotoParkingSF */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = MotoParkSF;
+			path = MotoParkingSF;
 			sourceTree = "<group>";
 		};
-		E37FBB9E2F159864005D1963 /* MotoParkSFTests */ = {
+		E37FBB9E2F159864005D1963 /* MotoParkingSFTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = MotoParkSFTests;
+			path = MotoParkingSFTests;
 			sourceTree = "<group>";
 		};
-		E37FBBA82F159864005D1963 /* MotoParkSFUITests */ = {
+		E37FBBA82F159864005D1963 /* MotoParkingSFUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = MotoParkSFUITests;
+			path = MotoParkingSFUITests;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -82,9 +82,9 @@
 		E37FBB832F159863005D1963 = {
 			isa = PBXGroup;
 			children = (
-				E37FBB8E2F159863005D1963 /* MotoParkSF */,
-				E37FBB9E2F159864005D1963 /* MotoParkSFTests */,
-				E37FBBA82F159864005D1963 /* MotoParkSFUITests */,
+				E37FBB8E2F159863005D1963 /* MotoParkingSF */,
+				E37FBB9E2F159864005D1963 /* MotoParkingSFTests */,
+				E37FBBA82F159864005D1963 /* MotoParkingSFUITests */,
 				E37FBB8D2F159863005D1963 /* Products */,
 				E3A4DF412F175E4700B152A4 /* .swiftlint.yml */,
 			);
@@ -93,9 +93,9 @@
 		E37FBB8D2F159863005D1963 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				E37FBB8C2F159863005D1963 /* MotoParkSF.app */,
-				E37FBB9B2F159864005D1963 /* MotoParkSFTests.xctest */,
-				E37FBBA52F159864005D1963 /* MotoParkSFUITests.xctest */,
+				E37FBB8C2F159863005D1963 /* MotoParkingSF.app */,
+				E37FBB9B2F159864005D1963 /* MotoParkingSFTests.xctest */,
+				E37FBBA52F159864005D1963 /* MotoParkingSFUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -103,9 +103,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		E37FBB8B2F159863005D1963 /* MotoParkSF */ = {
+		E37FBB8B2F159863005D1963 /* MotoParkingSF */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = E37FBBAF2F159864005D1963 /* Build configuration list for PBXNativeTarget "MotoParkSF" */;
+			buildConfigurationList = E37FBBAF2F159864005D1963 /* Build configuration list for PBXNativeTarget "MotoParkingSF" */;
 			buildPhases = (
 				E37FBB882F159863005D1963 /* Sources */,
 				E37FBB892F159863005D1963 /* Frameworks */,
@@ -117,18 +117,18 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				E37FBB8E2F159863005D1963 /* MotoParkSF */,
+				E37FBB8E2F159863005D1963 /* MotoParkingSF */,
 			);
-			name = MotoParkSF;
+			name = MotoParkingSF;
 			packageProductDependencies = (
 			);
 			productName = MotoParkSF;
-			productReference = E37FBB8C2F159863005D1963 /* MotoParkSF.app */;
+			productReference = E37FBB8C2F159863005D1963 /* MotoParkingSF.app */;
 			productType = "com.apple.product-type.application";
 		};
-		E37FBB9A2F159864005D1963 /* MotoParkSFTests */ = {
+		E37FBB9A2F159864005D1963 /* MotoParkingSFTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = E37FBBB22F159864005D1963 /* Build configuration list for PBXNativeTarget "MotoParkSFTests" */;
+			buildConfigurationList = E37FBBB22F159864005D1963 /* Build configuration list for PBXNativeTarget "MotoParkingSFTests" */;
 			buildPhases = (
 				E37FBB972F159864005D1963 /* Sources */,
 				E37FBB982F159864005D1963 /* Frameworks */,
@@ -140,18 +140,18 @@
 				E37FBB9D2F159864005D1963 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				E37FBB9E2F159864005D1963 /* MotoParkSFTests */,
+				E37FBB9E2F159864005D1963 /* MotoParkingSFTests */,
 			);
-			name = MotoParkSFTests;
+			name = MotoParkingSFTests;
 			packageProductDependencies = (
 			);
 			productName = MotoParkSFTests;
-			productReference = E37FBB9B2F159864005D1963 /* MotoParkSFTests.xctest */;
+			productReference = E37FBB9B2F159864005D1963 /* MotoParkingSFTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		E37FBBA42F159864005D1963 /* MotoParkSFUITests */ = {
+		E37FBBA42F159864005D1963 /* MotoParkingSFUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = E37FBBB52F159864005D1963 /* Build configuration list for PBXNativeTarget "MotoParkSFUITests" */;
+			buildConfigurationList = E37FBBB52F159864005D1963 /* Build configuration list for PBXNativeTarget "MotoParkingSFUITests" */;
 			buildPhases = (
 				E37FBBA12F159864005D1963 /* Sources */,
 				E37FBBA22F159864005D1963 /* Frameworks */,
@@ -163,13 +163,13 @@
 				E37FBBA72F159864005D1963 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				E37FBBA82F159864005D1963 /* MotoParkSFUITests */,
+				E37FBBA82F159864005D1963 /* MotoParkingSFUITests */,
 			);
-			name = MotoParkSFUITests;
+			name = MotoParkingSFUITests;
 			packageProductDependencies = (
 			);
 			productName = MotoParkSFUITests;
-			productReference = E37FBBA52F159864005D1963 /* MotoParkSFUITests.xctest */;
+			productReference = E37FBBA52F159864005D1963 /* MotoParkingSFUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
@@ -195,7 +195,7 @@
 					};
 				};
 			};
-			buildConfigurationList = E37FBB872F159863005D1963 /* Build configuration list for PBXProject "MotoParkSF" */;
+			buildConfigurationList = E37FBB872F159863005D1963 /* Build configuration list for PBXProject "MotoParkingSF" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -209,9 +209,9 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				E37FBB8B2F159863005D1963 /* MotoParkSF */,
-				E37FBB9A2F159864005D1963 /* MotoParkSFTests */,
-				E37FBBA42F159864005D1963 /* MotoParkSFUITests */,
+				E37FBB8B2F159863005D1963 /* MotoParkingSF */,
+				E37FBB9A2F159864005D1963 /* MotoParkingSFTests */,
+				E37FBBA42F159864005D1963 /* MotoParkingSFUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -291,12 +291,12 @@
 /* Begin PBXTargetDependency section */
 		E37FBB9D2F159864005D1963 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = E37FBB8B2F159863005D1963 /* MotoParkSF */;
+			target = E37FBB8B2F159863005D1963 /* MotoParkingSF */;
 			targetProxy = E37FBB9C2F159864005D1963 /* PBXContainerItemProxy */;
 		};
 		E37FBBA72F159864005D1963 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = E37FBB8B2F159863005D1963 /* MotoParkSF */;
+			target = E37FBB8B2F159863005D1963 /* MotoParkingSF */;
 			targetProxy = E37FBBA62F159864005D1963 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -434,6 +434,7 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = MotoParkingSF;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.navigation";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "We need GPS information to show you parking on the map.";
@@ -470,6 +471,7 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = MotoParkingSF;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.navigation";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "We need GPS information to show you parking on the map.";
@@ -513,7 +515,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MotoParkSF.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/MotoParkSF";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MotoParkingSF.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/MotoParkingSF";
 			};
 			name = Debug;
 		};
@@ -535,7 +537,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MotoParkSF.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/MotoParkSF";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MotoParkingSF.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/MotoParkingSF";
 			};
 			name = Release;
 		};
@@ -582,7 +584,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		E37FBB872F159863005D1963 /* Build configuration list for PBXProject "MotoParkSF" */ = {
+		E37FBB872F159863005D1963 /* Build configuration list for PBXProject "MotoParkingSF" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				E37FBBAD2F159864005D1963 /* Debug */,
@@ -591,7 +593,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		E37FBBAF2F159864005D1963 /* Build configuration list for PBXNativeTarget "MotoParkSF" */ = {
+		E37FBBAF2F159864005D1963 /* Build configuration list for PBXNativeTarget "MotoParkingSF" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				E37FBBB02F159864005D1963 /* Debug */,
@@ -600,7 +602,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		E37FBBB22F159864005D1963 /* Build configuration list for PBXNativeTarget "MotoParkSFTests" */ = {
+		E37FBBB22F159864005D1963 /* Build configuration list for PBXNativeTarget "MotoParkingSFTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				E37FBBB32F159864005D1963 /* Debug */,
@@ -609,7 +611,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		E37FBBB52F159864005D1963 /* Build configuration list for PBXNativeTarget "MotoParkSFUITests" */ = {
+		E37FBBB52F159864005D1963 /* Build configuration list for PBXNativeTarget "MotoParkingSFUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				E37FBBB62F159864005D1963 /* Debug */,

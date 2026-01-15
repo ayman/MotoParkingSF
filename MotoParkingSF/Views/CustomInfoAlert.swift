@@ -36,9 +36,9 @@ struct CustomInfoAlert: View {
                                     .frame(width: 10, height: 10)
                                 Text("[Metered Parking](https://data.sfgov.org/Transportation/Metered-motorcycle-spaces/uf55-k7py/about_data)")
                                     .foregroundStyle(.secondary)
-                                Text("Updated: \(metered.formattedLastModified)")
-                                    .font(.caption)
                             }
+                            Text("Updated: \(metered.formattedLastModified)")
+                                .font(.caption)
                         }
                         if let unmetered = unmeteredMetadata {
                             HStack(spacing: 4) {
@@ -47,9 +47,9 @@ struct CustomInfoAlert: View {
                                     .frame(width: 10, height: 10)
                                 Text("[Unmetered Parking](https://data.sfgov.org/Transportation/Motorcycle-Parking-Unmetered/egmb-2zhs/about_data)")
                                     .foregroundStyle(.secondary)
-                                Text("Updated: \(unmetered.formattedLastModified)")
-                                    .font(.caption)
                             }
+                            Text("Updated: \(unmetered.formattedLastModified)")
+                                .font(.caption)
                         }
                     }
 
@@ -58,7 +58,7 @@ struct CustomInfoAlert: View {
                 }
                 .padding()
             }
-            .navigationTitle("MotoParkSF")
+            .navigationTitle(NameStrings.appName)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {

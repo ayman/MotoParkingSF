@@ -21,3 +21,7 @@ extension Color {
     static let metered = Color(hex: 0xD95F02)
     static let unmetered = Color(hex: 0x1B9E77)
 }
+
+struct NameStrings {
+    static let appName = Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as? String ?? "MotoParkingSF"
+}
