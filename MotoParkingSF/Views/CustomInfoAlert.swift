@@ -54,7 +54,7 @@ struct CustomInfoAlert: View {
                     }
 
                     Text("Free, open source, and no data collection!")
-                    Text("[Shamur.ai](https://shamur.ai) • [MotoParkSF on GitHub](https://github.com/ShamurAI/MotoParkSF)")
+                    Text("[Shamur.ai](https://shamur.ai) • [MotoParkingSF on GitHub](https://github.com/ayman/MotoParkingSF)")
                 }
                 .padding()
             }
