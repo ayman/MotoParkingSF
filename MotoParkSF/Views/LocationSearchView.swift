@@ -123,7 +123,7 @@ struct LocationSearchView: View {
                         isSearchFieldFocused = false
                     } label: {
                         Image(systemName: "xmark.circle.fill")
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(.primary)
                     }
                 }
             }
@@ -136,6 +136,9 @@ struct LocationSearchView: View {
                 ScrollView {
                     VStack(spacing: 0) {
                         ForEach(viewModel.searchResults, id: \.self) { result in
+                            let detail = result.subtitle.replacingOccurrences(of: ", United States$",
+                                                                              with: "",
+                                                                              options: .regularExpression)
                             Button {
                                 Task {
                                     if let searchResult = await viewModel.performSearch(for: result) {
@@ -156,9 +159,11 @@ struct LocationSearchView: View {
                                         .font(.body)
                                         .foregroundStyle(.black)
                                     if !result.subtitle.isEmpty {
-                                        Text(result.subtitle)
+                                        // Text(result.subtitle.trimSuffix(", United States"))
+                                        Text(detail)
                                             .font(.caption)
                                             .foregroundStyle(.gray)
+                                            .frame(width: .infinity, alignment: .leading)
                                     }
                                 }
                                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -174,7 +179,7 @@ struct LocationSearchView: View {
                     }
                 }
                 .frame(maxHeight: 300)
-                .background(.ultraThinMaterial)
+                .background(.thickMaterial)
                 .cornerRadius(10)
                 .padding(.top, 4)
             }

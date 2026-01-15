@@ -205,32 +205,55 @@ struct ContentView: View {
         .task {
             loadParkingSpots()
         }
-//        .onChange(of: locationManager.userLocation) { oldValue, newValue in
-//            if let location = newValue {
-//                cameraPosition = .region(MKCoordinateRegion(
-//                    center: location.coordinate,
-//                    span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
-//                ))
-//            }
-//        }
+        .onChange(of: locationManager.userLocation) { _, newValue in
+            // Update camera position when location becomes available
+            // Only move the camera if we don't already have a position set to user's location
+            if let location = newValue {
+                if Self.isInSanFrancisco(location.coordinate) {
+                    // User is in SF, update to their location
+                    cameraPosition = .region(MKCoordinateRegion(
+                        center: location.coordinate,
+                        span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
+                    ))
+                }
+                // If user is not in SF, keep the default SF location (do nothing)
+            }
+        }
     }
 
     init(locationManager: LocationManager = LocationManager()) {
         _locationManager = State(initialValue: locationManager)
 
-        // Set initial camera position
-        if let location = locationManager.userLocation {
+        // Set initial camera position based on user location
+        let defaultSFCoordinate = CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194)
+
+        if let location = locationManager.userLocation, Self.isInSanFrancisco(location.coordinate) {
+            // User is in San Francisco, use their location
             _cameraPosition = State(initialValue: .region(MKCoordinateRegion(
                 center: location.coordinate,
                 span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
             )))
         } else {
-            // Default to San Francisco
+            // User is not in San Francisco or location not available, default to SF
             _cameraPosition = State(initialValue: .region(MKCoordinateRegion(
-                center: CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194),
+                center: defaultSFCoordinate,
                 span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
             )))
         }
+    }
+
+    /// Check if a coordinate is within San Francisco's approximate boundaries
+    private static func isInSanFrancisco(_ coordinate: CLLocationCoordinate2D) -> Bool {
+        // San Francisco approximate bounds
+        let minLat = 37.70
+        let maxLat = 37.84
+        let minLon = -122.52
+        let maxLon = -122.35
+
+        return coordinate.latitude >= minLat &&
+               coordinate.latitude <= maxLat &&
+               coordinate.longitude >= minLon &&
+               coordinate.longitude <= maxLon
     }
 
     private func loadParkingSpots() {
@@ -323,8 +346,4 @@ struct ContentView: View {
     )
 
     return ContentView(locationManager: previewLocationManager)
-}
-
-#Preview("Blank Preview") {
-    ContentView()
 }
