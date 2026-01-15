@@ -51,9 +51,35 @@ struct ParkingSpot: Identifiable, Hashable {
     }
 }
 
+// Metadata structure for dataset information
+struct DatasetMetadata: Codable {
+    let meta: MetaContainer
+
+    struct MetaContainer: Codable {
+        let view: ViewInfo
+    }
+
+    struct ViewInfo: Codable {
+        let name: String
+        let viewLastModified: Int
+    }
+
+    var lastModifiedDate: Date {
+        Date(timeIntervalSince1970: TimeInterval(meta.view.viewLastModified))
+    }
+
+    var formattedLastModified: String {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .short
+        return formatter.string(from: lastModifiedDate)
+    }
+}
+
 // Response structure for the JSON file
 struct UnmeteredParkingResponse: Codable {
     let data: [[AnyCodable]]
+    let meta: DatasetMetadata.MetaContainer?
 
     struct AnyCodable: Codable {
         let value: Any
@@ -166,6 +192,7 @@ struct UnmeteredParkingResponse: Codable {
 // Index 24 contains an array: [ null, "37.798279", "-122.426623", null, false ]
 struct MeteredParkingResponse: Codable {
     let data: [[AnyCodable]]
+    let meta: DatasetMetadata.MetaContainer?
 
     struct AnyCodable: Codable {
         let value: Any

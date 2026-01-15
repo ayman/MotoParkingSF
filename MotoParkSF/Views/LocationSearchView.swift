@@ -154,11 +154,11 @@ struct LocationSearchView: View {
                                 VStack(alignment: .leading, spacing: 4) {
                                     Text(result.title)
                                         .font(.body)
-                                        .foregroundStyle(.primary)
+                                        .foregroundStyle(.black)
                                     if !result.subtitle.isEmpty {
                                         Text(result.subtitle)
                                             .font(.caption)
-                                            .foregroundStyle(.secondary)
+                                            .foregroundStyle(.gray)
                                     }
                                 }
                                 .frame(maxWidth: .infinity, alignment: .leading)

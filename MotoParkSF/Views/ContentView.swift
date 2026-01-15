@@ -21,6 +21,8 @@ struct ContentView: View {
     @State private var visibleRegion: MKCoordinateRegion?
     @State private var searchedLocation: SearchedLocation?
     @State private var showingSearchedLocationDetail = false
+    @State private var meteredMetadata: DatasetMetadata?
+    @State private var unmeteredMetadata: DatasetMetadata?
 
     private var selectedSpot: ParkingSpot? {
         guard let id = selectedSpotID else { return nil }
@@ -76,15 +78,27 @@ struct ContentView: View {
                 ForEach(parkingSpots) { spot in
                     Annotation(spot.street, coordinate: spot.coordinate) {
                         ZStack {
-                            Circle()
-                                .fill(spot.isMetered ? .red : .orange)
-                                .frame(width: 32, height: 32)
-                            Circle()
-                                .stroke(.white, lineWidth: 2)
-                                .frame(width: 32, height: 32)
-                            Text("\(spot.numberOfSpaces ?? 0)")
-                                .font(.system(size: 14, weight: .bold))
-                                .foregroundStyle(.white)
+                            if spot.isMetered {
+                                Circle()
+                                    .fill(Color.metered)
+                                    .frame(width: 32, height: 32)
+                                Circle()
+                                    .stroke(.white, lineWidth: 2)
+                                    .frame(width: 32, height: 32)
+                                Text("\(spot.numberOfSpaces ?? 0)")
+                                    .font(.system(size: 14, weight: .bold))
+                                    .foregroundStyle(.white)
+                            } else {
+                                Rectangle()
+                                    .fill(Color.unmetered)
+                                    .frame(width: 32, height: 32)
+                                Rectangle()
+                                    .stroke(.white, lineWidth: 2)
+                                    .frame(width: 32, height: 32)
+                                Text("\(spot.numberOfSpaces ?? 0)")
+                                    .font(.system(size: 14, weight: .bold))
+                                    .foregroundStyle(.white)
+                            }
                         }
                     }
                     .annotationTitles(.hidden)
@@ -101,7 +115,6 @@ struct ContentView: View {
                 MapScaleView()
             }
 
-            // Visible spots overlay - at top right
             if !parkingSpots.isEmpty {
                 VStack(alignment: .leading, spacing: 4) {
                     let spots = visibleSpots.count != 1 ? "Locations" : "Location"
@@ -127,14 +140,14 @@ struct ContentView: View {
                     HStack(spacing: 12) {
                         HStack(spacing: 4) {
                             Circle()
-                                .fill(.red)
+                                .fill(Color.metered)
                                 .frame(width: 8, height: 8)
                             Text("\(visibleMeteredCount) metered")
                                 .font(.caption2)
                         }
                         HStack(spacing: 4) {
-                            Circle()
-                                .fill(.orange)
+                            Rectangle()
+                                .fill(Color.unmetered)
                                 .frame(width: 8, height: 8)
                             Text("\(visibleUnmeteredCount) unmetered")
                                 .font(.caption2)
@@ -159,21 +172,6 @@ struct ContentView: View {
                         visibleRegion: $visibleRegion,
                         searchedLocation: $searchedLocation
                     )
-
-//                    // Info button
-//                    Button {
-//                        showingInfo = true
-//                    } label: {
-//                        Image(systemName: "info.circle.fill")
-//                            .font(.system(size: 32))
-//                            .foregroundStyle(.blue)
-//                            .background(
-//                                Circle()
-//                                    .fill(.ultraThinMaterial)
-//                                    .frame(width: 40, height: 40)
-//                            )
-//                    }
-//                    .padding(.leading, 8)
                 }
                 .padding()
                 .padding(.bottom, 8) // Extra padding from bottom edge
@@ -199,7 +197,10 @@ struct ContentView: View {
             }
         }
         .sheet(isPresented: $showingInfo) {
-            CustomInfoAlert()
+            CustomInfoAlert(
+                meteredMetadata: meteredMetadata,
+                unmeteredMetadata: unmeteredMetadata
+            )
         }
         .task {
             loadParkingSpots()
@@ -233,67 +234,79 @@ struct ContentView: View {
     }
 
     private func loadParkingSpots() {
-        print("📍 Attempting to load parking spots...")
+        // print("📍 Attempting to load parking spots...")
         var allSpots: [ParkingSpot] = []
 
         // Load unmetered parking spots
         if let url = Bundle.main.url(forResource: "unmetered", withExtension: "json") {
-            print("✅ Found unmetered.json file at: \(url)")
+            // print("✅ Found unmetered.json file at: \(url)")
 
             do {
                 let data = try Data(contentsOf: url)
-                print("✅ Loaded \(data.count) bytes of unmetered data")
+                // print("✅ Loaded \(data.count) bytes of unmetered data")
 
                 let response = try JSONDecoder().decode(UnmeteredParkingResponse.self, from: data)
-                print("✅ Decoded unmetered JSON response with \(response.data.count) rows")
+                // print("✅ Decoded unmetered JSON response with \(response.data.count) rows")
+
+                // Store metadata
+                if let meta = response.meta {
+                    unmeteredMetadata = DatasetMetadata(meta: meta)
+                    // print("✅ Loaded unmetered metadata: last modified \(unmeteredMetadata?.formattedLastModified ?? "unknown")")
+                }
 
                 let unmeteredSpots = response.toParkingSpots()
                 allSpots.append(contentsOf: unmeteredSpots)
-                print("✅ Loaded \(unmeteredSpots.count) unmetered parking spots")
+                // print("✅ Loaded \(unmeteredSpots.count) unmetered parking spots")
             } catch {
-                print("❌ Error loading unmetered parking spots: \(error)")
+                // print("❌ Error loading unmetered parking spots: \(error)")
             }
         } else {
-            print("⚠️ Could not find unmetered.json in bundle")
+            // print("⚠️ Could not find unmetered.json in bundle")
         }
 
         // Load metered parking spots
         if let url = Bundle.main.url(forResource: "metered", withExtension: "json") {
-            print("✅ Found metered.json file at: \(url)")
+            // print("✅ Found metered.json file at: \(url)")
 
             do {
                 let data = try Data(contentsOf: url)
-                print("✅ Loaded \(data.count) bytes of metered data")
+                // print("✅ Loaded \(data.count) bytes of metered data")
 
                 let response = try JSONDecoder().decode(MeteredParkingResponse.self, from: data)
-                print("✅ Decoded metered JSON response with \(response.data.count) rows")
+                // print("✅ Decoded metered JSON response with \(response.data.count) rows")
+
+                // Store metadata
+                if let meta = response.meta {
+                    meteredMetadata = DatasetMetadata(meta: meta)
+                    // print("✅ Loaded metered metadata: last modified \(meteredMetadata?.formattedLastModified ?? "unknown")")
+                }
 
                 let meteredSpots = response.toParkingSpots()
                 allSpots.append(contentsOf: meteredSpots)
-                print("✅ Loaded \(meteredSpots.count) metered parking spots")
+                // print("✅ Loaded \(meteredSpots.count) metered parking spots")
             } catch {
-                print("❌ Error loading metered parking spots: \(error)")
+                // print("❌ Error loading metered parking spots: \(error)")
                 if let decodingError = error as? DecodingError {
                     switch decodingError {
                     case .keyNotFound(let key, let context):
-                        print("Key '\(key)' not found:", context.debugDescription)
+                         print("Key '\(key)' not found:", context.debugDescription)
                     case .valueNotFound(let value, let context):
-                        print("Value '\(value)' not found:", context.debugDescription)
+                         print("Value '\(value)' not found:", context.debugDescription)
                     case .typeMismatch(let type, let context):
-                        print("Type '\(type)' mismatch:", context.debugDescription)
+                         print("Type '\(type)' mismatch:", context.debugDescription)
                     case .dataCorrupted(let context):
-                        print("Data corrupted:", context.debugDescription)
+                         print("Data corrupted:", context.debugDescription)
                     @unknown default:
-                        print("Unknown decoding error")
+                         print("Unknown decoding error")
                     }
                 }
             }
         } else {
-            print("⚠️ Could not find metered.json in bundle")
+            // print("⚠️ Could not find metered.json in bundle")
         }
 
         parkingSpots = allSpots
-        print("✅ Total loaded: \(parkingSpots.count) parking spots (\(parkingSpots.filter(\.isMetered).count) metered, \(parkingSpots.filter { !$0.isMetered }.count) unmetered)")
+        // print("✅ Total loaded: \(parkingSpots.count) parking spots (\(parkingSpots.filter(\.isMetered).count) metered, \(parkingSpots.filter { !$0.isMetered }.count) unmetered)")
 
         if let first = parkingSpots.first {
             print("📌 First spot: \(first.street) at (\(first.coordinate.latitude), \(first.coordinate.longitude))")
@@ -315,9 +328,3 @@ struct ContentView: View {
 #Preview("Blank Preview") {
     ContentView()
 }
-
-// Note: MapKit previews often show a blank grid in Xcode Canvas.
-// This is a known limitation - the map will render correctly when you:
-// - Run on the iOS Simulator (⌘R)
-// - Run on a physical device
-// The preview grid shows the correct layout, just not the actual map tiles.
