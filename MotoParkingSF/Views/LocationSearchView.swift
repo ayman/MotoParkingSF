@@ -128,7 +128,7 @@ struct LocationSearchView: View {
                 }
             }
             .padding(12)
-            .background(.ultraThinMaterial)
+            .background(.thinMaterial)
             .cornerRadius(10)
 
             // Search results

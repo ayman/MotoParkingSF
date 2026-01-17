@@ -24,6 +24,7 @@ struct ContentView: View {
     @State private var meteredMetadata: DatasetMetadata?
     @State private var unmeteredMetadata: DatasetMetadata?
     @State private var hasSetInitialPosition = false
+    @State private var mapStyle: MapStyleOption = .standard
 
     private var selectedSpot: ParkingSpot? {
         guard let id = selectedSpotID else { return nil }
@@ -106,7 +107,7 @@ struct ContentView: View {
                     .tag(spot.id)
                 }
             }
-            .mapStyle(.standard)
+            .mapStyle(mapStyle.mapStyle)
             .onMapCameraChange { context in
                 visibleRegion = context.region
             }
@@ -166,13 +167,29 @@ struct ContentView: View {
             VStack {
                 Spacer()
 
-                HStack(alignment: .center, spacing: 16) {
+                HStack(alignment: .bottom, spacing: 16) {
                     // Search field
                     LocationSearchView(
                         cameraPosition: $cameraPosition,
                         visibleRegion: $visibleRegion,
                         searchedLocation: $searchedLocation
                     )
+
+                    // Map Style Toggle Button
+                    Button {
+                        mapStyle = mapStyle.next()
+                    } label: {
+                        VStack(spacing: 4) {
+                            Image(systemName: mapStyle.icon)
+                                .font(.system(size: 20))
+                            Text(mapStyle.displayName)
+                                .font(.caption2)
+                        }
+                        .foregroundStyle(.primary)
+                        .padding(8)
+                        .background(.thinMaterial)
+                        .cornerRadius(8)
+                    }
                 }
                 .padding()
                 .padding(.bottom, 8) // Extra padding from bottom edge
@@ -348,4 +365,55 @@ struct ContentView: View {
     )
 
     return ContentView(locationManager: previewLocationManager)
+}
+// MARK: - Map Style Option
+
+enum MapStyleOption {
+    case standard
+    case hybrid
+//    case imagery
+
+    var mapStyle: MapStyle {
+        switch self {
+        case .standard:
+            return .standard
+        case .hybrid:
+            return .hybrid
+//        case .imagery:
+//            return .imagery
+        }
+    }
+
+    var displayName: String {
+        switch self {
+        case .standard:
+            return "Street"
+        case .hybrid:
+            return "Hybrid"
+//        case .imagery:
+//            return "Aerial"
+        }
+    }
+
+    var icon: String {
+        switch self {
+        case .standard:
+            return "map"
+        case .hybrid:
+            return "map.fill"
+//        case .imagery:
+//            return "globe.americas.fill"
+        }
+    }
+
+    func next() -> MapStyleOption {
+        switch self {
+        case .standard:
+            return .hybrid
+        case .hybrid:
+            return .standard
+//        case .imagery:
+//            return .standard
+        }
+    }
 }
