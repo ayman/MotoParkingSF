@@ -76,12 +76,13 @@ struct ParkingSpotDetailView: View {
                             Label("Open in Maps", systemImage: "map.fill")
                         }
                     }
-                } footer: {
-                    Text(String(format: "(%.6f, %.6f)",
-                                spot.coordinate.latitude,
-                                spot.coordinate.longitude))
-                    .frame(maxWidth: .infinity, alignment: .trailing)
                 }
+//                footer: {
+//                    Text(String(format: "(%.6f, %.6f)",
+//                                spot.coordinate.latitude,
+//                                spot.coordinate.longitude))
+//                    .frame(maxWidth: .infinity, alignment: .trailing)
+//                }
             }
             .navigationTitle("📍 \(spot.street.capitalized)")
             .navigationBarTitleDisplayMode(.inline)

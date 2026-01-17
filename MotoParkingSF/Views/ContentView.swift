@@ -157,7 +157,7 @@ struct ContentView: View {
                     }
                 }
                 .padding(8)
-                .background(.ultraThinMaterial)
+                .background(.thinMaterial)
                 .cornerRadius(8)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
                 .padding()
