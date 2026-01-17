@@ -55,6 +55,8 @@ struct CustomInfoAlert: View {
 
                     Text("Free, open source, and no data collection!")
                     Text("[Shamur.ai](https://shamur.ai) • [MotoParkingSF on GitHub](https://github.com/ayman/MotoParkingSF)")
+                    Text("Version \(NameStrings.appVersion) (\(NameStrings.buildVersionNumber))")
+                        .font(.footnote)
                 }
                 .padding()
             }

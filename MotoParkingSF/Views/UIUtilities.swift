@@ -24,4 +24,6 @@ extension Color {
 
 struct NameStrings {
     static let appName = Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as? String ?? "MotoParkingSF"
+    static let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? ""
+    static let buildVersionNumber = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? ""
 }
