@@ -24,7 +24,7 @@ struct ContentView: View {
     @State private var meteredMetadata: DatasetMetadata?
     @State private var unmeteredMetadata: DatasetMetadata?
     @State private var hasSetInitialPosition = false
-    @State private var mapStyle: MapStyleOption = .standard
+    @AppStorage("mapStyle") private var mapStyle: MapStyleOption = .standard
 
     private var selectedSpot: ParkingSpot? {
         guard let id = selectedSpotID else { return nil }
@@ -368,7 +368,7 @@ struct ContentView: View {
 }
 // MARK: - Map Style Option
 
-enum MapStyleOption {
+enum MapStyleOption: String {
     case standard
     case hybrid
 //    case imagery

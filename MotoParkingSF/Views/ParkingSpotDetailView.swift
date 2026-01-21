@@ -38,8 +38,10 @@ struct ParkingSpotDetailView: View {
                         HStack {
                             Text(spot.isMetered ? "Metered" : "Unmetered")
                                 .font(.headline)
-                            Image(systemName: spot.isMetered ? "dollarsign.circle.fill" : "heart.fill")
-                                .foregroundStyle(spot.isMetered ? Color.red : Color.green)
+                            if spot.isMetered {
+                                Image(systemName: "dollarsign.circle.fill")
+                                    .foregroundStyle(Color.red)
+                            }
                         }
                     }
 
@@ -48,8 +50,8 @@ struct ParkingSpotDetailView: View {
                             HStack {
                                 Text(rateDescription)
                                     .font(.headline)
-                                Image(systemName: "dollarsign.circle")
-                                    .foregroundStyle(Color.metered)
+                                // Image(systemName: "dollarsign.circle")
+                                //    .foregroundStyle(Color.metered)
                             }
                         }
                     }
