@@ -3,6 +3,8 @@ Pulling from San Francisco open data, you'll get a map showing you spots for met
 
 This app is totally private with no data collection and totally free and open source.
 
+[![Download on the App Store](https://toolbox.marketingtools.apple.com/api/v2/badges/download-on-the-app-store/black/en-us?releaseDate=1769126400)](https://apps.apple.com/us/app/motoparksf/id6757778742?itscg=30200&itsct=apps_box_badge&mttnsubad=6757778742)
+
 Data is pulled from [DataSF | Open Data Portal](https://data.sfgov.org):
  * [Metered Parking Data](https://data.sfgov.org/Transportation/Metered-motorcycle-spaces/uf55-k7py)
  * [Unmetered Parking Data](https://data.sfgov.org/Transportation/Motorcycle-Parking-Unmetered/egmb-2zhs)
