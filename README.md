@@ -8,3 +8,7 @@ This app is totally private with no data collection and totally free and open so
 Data is pulled from [DataSF | Open Data Portal](https://data.sfgov.org):
  * [Metered Parking Data](https://data.sfgov.org/Transportation/Metered-motorcycle-spaces/uf55-k7py)
  * [Unmetered Parking Data](https://data.sfgov.org/Transportation/Motorcycle-Parking-Unmetered/egmb-2zhs)
+
+<img src="https://raw.githubusercontent.com/ayman/MotoParkingSF/refs/heads/main/Images/ss1.png" width="auto" height="240" align="left">
+<img src="https://raw.githubusercontent.com/ayman/MotoParkingSF/refs/heads/main/Images/ss2.png" width="auto" height="240" align="left">
+<img src="https://raw.githubusercontent.com/ayman/MotoParkingSF/refs/heads/main/Images/ss3.png" width="auto" height="240" align="left">
